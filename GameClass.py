@@ -34,39 +34,63 @@ game_won_o = [["X", "O", "X"],
                 ["O", "X", "-"],
                 ["O", "O", "O"]]
 
+master_game = [game_won_o, game_not_done, game_not_done, game_not_done, game_not_done, game_not_done, game_not_done, game_not_done, game_not_done]
+
+
 def terminal_test(game):
+    # INPUT: 3X3 GAME BOARD
+    # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
+
     game_won = False
+    winning_character = None
 
     for j in range(3):
         # Row Test
         tmp_char_row = game[j][0]
         if tmp_char_row != "-":
             if tmp_char_row == game[j][1] and tmp_char_row == game[j][2]:
-                gmae_won = True
+                game_won = True
+                winning_character = tmp_char_row
 
         # Column Test
         tmp_char_col = game[0][j]
         if tmp_char_col != "-":
             if tmp_char_col == game[1][j] and tmp_char_col == game[2][j]:
                 game_won = True
+                winning_character = tmp_char_col
 
     # Diagonal Test this way -> \
     tmp_char_diag = game[0][0]
     if tmp_char_diag != "-":
         if tmp_char_diag == game[1][1] and tmp_char_diag == game[2][2]:
             game_won = True
+            winning_character = tmp_char_diag
 
     # Diagonal Test this way -> /
     tmp_char_diag = game[0][2]
     if tmp_char_diag != "-":
         if tmp_char_diag == game[1][1] and tmp_char_diag == game[2][0]:
             game_won = True
+            winning_character = tmp_char_diag
+    return game_won, winning_character
 
-    return game_won
+def master_to_big(game):
+    # INPUT: 9X3X3 MASTER GAME BOARD
+    # OUTPUT: SMALLER 3X3 GAME BOARD REPRESENTING LARGER BOARD
 
-print(terminal_test(game_not_done))
-print(terminal_test(game_won_o))
-print(terminal_test(game_won_x))
+    return_game = [[" ", " ", " "],
+                    [" ", " ", " "],
+                    [" ", " ", " "]]
+    for i in range(9):
+        ind_game = game[i]
+        game_won, winning_character = terminal_test(ind_game)
+        if game_won:
+            char = winning_character
+        else:
+            char = "-"
+        return_game[i//3][i%3] = char
+    return return_game
+
 
 
 
