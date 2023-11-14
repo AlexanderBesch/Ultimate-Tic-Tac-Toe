@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-@author: Pulkit Maloo
-"""
+
 
 # =============================================================================
 # State is stored as a string where index is at place shown in the board below
@@ -23,42 +19,6 @@
 #
 # =============================================================================
 
-from math import inf
-from collections import Counter
-import itertools
-from time import time
-
-
-
-'''
-randothellogame module
-
-sets up a RandOthello game closely following the book's framework for games
-
-RandOthelloState is a class that will handle our state representation, then we've 
-got stand-alone functions for player, actions, result and terminal_test
-
-Differing from the book's framework, is that utility is *not* a stand-alone 
-function, as each player might have their own separate way of calculating utility
-
-Black is -1
-White is 1
-X is -2
-array is 8x8, when printing state, columns are the rows
-'''
-
-# README
-
-# HW 3 - ALEXANDER BESCH - BESCH040
-# This will take roughly 35 seconds to run
-
-
-
-
-import random
-import copy
-import time
-import PlayerClasses
 
 
 
@@ -105,7 +65,8 @@ def terminal_test(game):
     return game_won
 
 print(terminal_test(game_not_done))
-
+print(terminal_test(game_won_o))
+print(terminal_test(game_won_x))
 
 
 
