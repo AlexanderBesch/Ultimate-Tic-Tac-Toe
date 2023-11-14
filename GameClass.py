@@ -57,6 +57,7 @@ array is 8x8, when printing state, columns are the rows
 import random
 import copy
 import time
+import PlayerClasses
 
 WHITE = 1
 BLACK = -1
@@ -64,120 +65,9 @@ EMPTY = 0
 BLOCKED = -2
 SIZE = 8
 SKIP = "SKIP"
-WHITE_TIME = 0.0
-BLACK_TIME = 0.0
 
 
-def time_reset(color=None):
-    global WHITE_TIME, BLACK_TIME
-    if color == 1:
-        WHITE_TIME = 0.0
-    elif color == -1:
-        BLACK_TIME = 0.0
-    elif color == None:
-        WHITE_TIME = 0.0
-        BLACK_TIME = 0.0
 
-
-def add_time(color, time):
-    global WHITE_TIME, BLACK_TIME
-    if color == 1:
-        WHITE_TIME += time
-    if color == -1:
-        BLACK_TIME += time
-
-
-def print_time():
-    print("Total compute time for black: ", BLACK_TIME, " sec")
-    print("Total compute time for white: ", WHITE_TIME, " sec")
-
-
-class OthelloPlayerTemplate:
-    '''Template class for an Othello Player
-
-    An othello player *must* implement the following methods:
-
-    get_color(self) - correctly returns the agent's color
-
-    make_move(self, state) - given the state, returns an action that is the agent's move
-    '''
-
-    def __init__(self, mycolor):
-        self.color = mycolor
-
-    def get_color(self):
-        return self.color
-
-    def make_move(self, state):
-        '''Given the state, returns a legal action for the agent to take in the state
-        '''
-        return None
-
-
-class RandomPlayer:
-    '''Template class for an Othello Player
-
-    An othello player *must* implement the following methods:
-
-    get_color(self) - correctly returns the agent's color
-
-    make_move(self, state) - given the state, returns an action that is the agent's move
-    '''
-
-    def __init__(self, mycolor):
-        self.color = mycolor
-
-    def get_color(self):
-        return self.color
-
-    def make_move(self, state):
-        '''Given the state, returns a legal action for the agent to take in the state
-        '''
-        # start = time.time()
-        action_list = actions(state)
-        action_taken = random.choice(action_list)
-        # stop = time.time()
-        # add_time(self.color, stop - start)
-
-        return action_taken
-
-
-class AlphaBetaPlayer:
-    '''Template class for an Othello Player
-
-    An othello player *must* implement the following methods:
-
-    get_color(self) - correctly returns the agent's color
-
-    make_move(self, state) - given the state, returns an action that is the agent's move
-    '''
-
-    def __init__(self, mycolor, depth_limit):
-        self.color = mycolor
-        self.depth_limit = depth_limit
-
-    def get_color(self):
-        return self.color
-
-    def make_move(self, state):
-        '''Given the state, returns a legal action for the agent to take in the state
-        '''
-        colorName = "WHITE"
-        if self.color == -1:
-            colorName = "BLACK"
-
-        # print("#############  ", colorName, "  #############")
-        # print("Before Running minimax, current utility: ", utilityFunction(state, self.color), "", end="")
-
-        start = time.time()
-        value, move = max_value_alpha_beta(state, self.depth_limit, self.color, float('-inf'), float('inf'))
-        stop = time.time()
-        add_time(self.color, stop - start)
-        # print(", After: ", utilityFunction(result(state, move), self.color))
-        # print("Available Actions: ", actions(state))
-        # print("Chosen results: Value: ", value, " Move: ", move)
-
-        return move
 
 
 def max_value_alpha_beta(state, depth, player, alpha, beta):
