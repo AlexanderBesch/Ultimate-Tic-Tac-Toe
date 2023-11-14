@@ -11,6 +11,7 @@ SIZE = 8
 SKIP = "SKIP"
 
 
+
 # class OthelloPlayerTemplate:
 #     '''Template class for an Othello Player
 #
