@@ -53,13 +53,13 @@ class UtttState:
         # new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
         return new_string
 
-    def print_subboard(self, num) -> str:
-        new_string = ""
-        sub_board = self.board_array[num]
-        for i in range(SIZEMINI):
-            items = " ".join(sub_board[i])
-            new_string += items + "\n"
-        print(new_string)
+    # def print_subboard(self, num) -> str:
+    #     new_string = ""
+    #     sub_board = self.board_array[num]
+    #     for i in range(SIZEMINI):
+    #         items = " ".join(sub_board[i])
+    #         new_string += items + "\n"
+    #     print(new_string)
         
 class UtttGame:
     """A class to encapsulate the variable and methods for the Uttt game."""
@@ -73,15 +73,15 @@ def terminal_test(gameBoard, state=None):
     winning_character = None
     game = copy.deepcopy(gameBoard)
 
-    # Check if the game is in a tie
+    # Check if the game is in a tie  - MOVE TO END
     if state is not None: # 
         if actions(state) == []:
-            game_won = True # assuming the game was won
-            winning_character = state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]] # initializing the winning character
+            game_over = True # assuming the game is over
+            winning_character = ""# state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]] # initializing the winning character
             not_tie, tmp = terminal_test(state.master) # Checking if the game is not a tie
-            if not_tie != True: # If the game is a tie, then the winning character is a tie
+            if not not_tie: # If the game is a tie, then the winning character is a tie
                 winning_character = "Tie"
-            return game_won, winning_character
+            return game_over, winning_character
 
     # Column and row test
     for j in range(3):
@@ -129,7 +129,7 @@ def big_to_master(game):
         if game_won:
             char = winning_character
         else:
-            char = "-"
+            char = EMPTY
         return_game[i//3][i%3] = char
     return return_game
 
@@ -158,10 +158,9 @@ def actions(state):
                         legal_actions.append((mini_board,i,j))
         return legal_actions
 
-
     # Last move was not None.
     mb = state.last_move[1] * 3 + state.last_move[2]
-    game_over, tmp = terminal_test(state.board_array[mb])
+    game_over, tmp = terminal_test(state.board_array[mb]) # USE MASTER BOARD INSTEAD OF TERMINAL TEST
 
     # Check if the mini board is full. If it is, then any move is possible that.
     if game_over:
