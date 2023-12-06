@@ -24,7 +24,10 @@ class UtttState:
         self.other = otherplayer
         self.last_move = last_move
         self.master = master_to_big(self.board_array)
-
+        # self.winner = None
+        # game_won, winning_character = terminal_test(self.master, self)
+        # if game_won:
+        #     self.winner = winning_character
 
     # def master_to_smaller(self):
     #     #will return the state of
@@ -187,10 +190,10 @@ def heuristic(state):
     game_over, winner = terminal_test(state.master, state)
     score = 0
     if game_over:
-        if winner == state.current:
-            return 1000
-        elif winner == state.other:
-            return -1000
+        if winner == state.current.get_sign():
+            return 10000
+        elif winner == state.other.get_sign():
+            return -10000
         else:
             return 0
 
@@ -200,9 +203,67 @@ def heuristic(state):
         # Last move was None, so any move is possible. therefore the board is empty and the score is 0
         return 0
 
+    # SCORES FOR THE MASTER BOARD
+    MASTER_CENTER = 500
+    MASTER_CORNER = 400
+    MASTER_EDGE = 300
+
     # Find the number of positions on the master board that are filled. Give each of these a high score
+    for i in range(SIZEMINI):
+        for j in range(SIZEMINI):
+            # Checking if the current position is filled with the current player's sign.
+            if state.master[i][j] == state.current.get_sign():
+                # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+                if check_if_center(i, j):
+                    score += MASTER_CENTER
+                if check_if_corner(i, j):
+                    score += MASTER_CORNER
+                if check_if_edge(i, j):
+                    score += MASTER_EDGE
+
+            elif state.master[i][j] == state.other.get_sign():
+                # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+                if check_if_center(i, j):
+                    score -= MASTER_CENTER
+                if check_if_corner(i, j):
+                    score -= MASTER_CORNER
+                if check_if_edge(i, j):
+                    score -= MASTER_EDGE
 
 
+    # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
+    MINI_CENTER = 5
+    MINI_CORNER = 4
+    MINI_EDGE = 2
+
+    for mb in range(SIZE):
+        for i in range(SIZEMINI):
+            for j in range(SIZEMINI):
+                # Checking if the game is won - if so, we have already assigned a score for the master board.
+                game_over, winner = terminal_test(state.board_array[mb])
+                if not game_over:
+                    # Game is not over. Checking if the current position is filled with the current player's sign.
+                    if state.board_array[mb][i][j] == state.current.get_sign():
+                        # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+                        if check_if_center(i, j):
+                            score += MINI_CENTER
+                        if check_if_corner(i, j):
+                            score += MINI_CORNER
+                        if check_if_edge(i, j):
+                            score += MINI_EDGE
+
+                    elif state.board_array[mb][i][j] == state.other.get_sign():
+                        # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+                        if check_if_center(i, j):
+                            score -= MINI_CENTER
+                        if check_if_corner(i, j):
+                            score -= MINI_CORNER
+                        if check_if_edge(i, j):
+                            score -= MINI_EDGE
+
+
+
+    return score
     # # Check if the mini board is full. If it is, then any move is possible that.
     # if game_over:
     #     return 0
@@ -210,6 +271,38 @@ def heuristic(state):
     # else:
     #     # Last move was not None, and the mini board is not full. Return all empty mini board positions.
     #     return 0
+
+def check_if_center(i, j):
+    if i == 1 and j == 1:
+        return True
+    else:
+        return False
+
+def check_if_corner(i, j):
+    if i == 0 and j == 0:
+        return True
+    elif i == 0 and j == 2:
+        return True
+    elif i == 2 and j == 0:
+        return True
+    elif i == 2 and j == 2:
+        return True
+    else:
+        return False
+
+def check_if_edge(i, j):
+    if i == 0 and j == 1:
+        return True
+    elif i == 1 and j == 0:
+        return True
+    elif i == 1 and j == 2:
+        return True
+    elif i == 2 and j == 1:
+        return True
+    else:
+        return False
+
+
 
 
 def result(state, action):
@@ -253,6 +346,7 @@ def play_game(p1 = None, p2 = None):
             return
         s = result(s, action)
         print(s)
+        print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         game_over, winner = terminal_test(s.master, s)
         if game_over:
             print("Game Over")
@@ -268,6 +362,7 @@ def play_game(p1 = None, p2 = None):
         s = result(s, action)
         print(s)
         game_over, winner = terminal_test(s.master, s)
+        print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
