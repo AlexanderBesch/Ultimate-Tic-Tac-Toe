@@ -24,10 +24,6 @@ class UtttState:
         self.other = otherplayer
         self.last_move = last_move
         self.master = big_to_master(self.board_array)
-        # self.winner = None
-        # game_won, winning_character = terminal_test(self.master, self)
-        # if game_won:
-        #     self.winner = winning_character
         self.heuristic = heuristic(self)
 
     # def master_to_smaller(self):
