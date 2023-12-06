@@ -65,23 +65,40 @@ class UtttGame:
     """A class to encapsulate the variable and methods for the Uttt game."""
     pass
 
-def terminal_test(gameBoard, state=None):
+
+def terminal_test(state):
     # INPUT: 3X3 GAME BOARD
     # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
 
     game_won = False
     winning_character = None
-    game = copy.deepcopy(gameBoard)
+    game = copy.deepcopy(state)
 
-    # Check if the game is in a tie  - MOVE TO END
-    if state is not None: # 
-        if actions(state) == []:
-            game_over = True # assuming the game is over
-            winning_character = ""# state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]] # initializing the winning character
-            not_tie, tmp = terminal_test(state.master) # Checking if the game is not a tie
-            if not not_tie: # If the game is a tie, then the winning character is a tie
-                winning_character = "Tie"
-            return game_over, winning_character
+    # Check if the master board is won
+    game_won, winning_character = terminal_test3x3(game.master)
+    if game_won:
+        return game_won, winning_character
+
+    # Master board is not conventionally won.
+    # Check if the game is in a tie
+    if actions(state) == []:
+        game_over = True  # assuming the game is over
+        winning_character = ""  # state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]] # initializing the winning character
+        not_tie, tmp = terminal_test3x3(state.master)  # Checking if the game is not a tie
+        if not not_tie:  # If the game is a tie, then the winning character is a tie
+            winning_character = "Tie"
+        return game_over, winning_character
+
+    return game_won, winning_character
+
+
+def terminal_test3x3(mb):
+    # INPUT: 3X3 GAME BOARD
+    # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
+
+    game_won = False
+    winning_character = None
+    game = copy.deepcopy(mb)
 
     # Column and row test
     for j in range(3):
@@ -125,7 +142,7 @@ def big_to_master(game):
                     [" ", " ", " "]]
     for i in range(9):
         ind_game = game[i]
-        game_won, winning_character = terminal_test(ind_game)
+        game_won, winning_character = terminal_test3x3(ind_game)
         if game_won:
             char = winning_character
         else:
@@ -147,7 +164,7 @@ def actions(state):
     if state.last_move is None:
         possible_mini_boards = []
         for mini_board in range(SIZE):
-            game_over, tmp = terminal_test(state.board_array[mini_board])
+            game_over, tmp = terminal_test3x3(state.board_array[mini_board])
             if not game_over:
                 possible_mini_boards.append(mini_board)
         # Last move was None, so any move is possible.
@@ -160,13 +177,13 @@ def actions(state):
 
     # Last move was not None.
     mb = state.last_move[1] * 3 + state.last_move[2]
-    game_over, tmp = terminal_test(state.board_array[mb]) # USE MASTER BOARD INSTEAD OF TERMINAL TEST
+    game_over, tmp = terminal_test3x3(state.board_array[mb]) # USE MASTER BOARD INSTEAD OF TERMINAL TEST
 
     # Check if the mini board is full. If it is, then any move is possible that.
     if game_over:
         possible_mini_boards = []
         for mini_board in range(SIZE):
-            game_over, tmp = terminal_test(state.board_array[mini_board])
+            game_over, tmp = terminal_test3x3(state.board_array[mini_board])
             if not game_over:
                 possible_mini_boards.append(mini_board)
         # Last move was None, so any move is possible.
@@ -189,7 +206,7 @@ def heuristic(state):
     """Returns the heuristic value of the given state.
     This is the evaluation function for the state."""
     # Check if the game is over.
-    game_over, winner = terminal_test(state.master, state)
+    game_over, winner = terminal_test(state)
     score = 0
     if game_over:
         if winner == state.current.get_sign():
@@ -242,7 +259,7 @@ def heuristic(state):
         for i in range(SIZEMINI):
             for j in range(SIZEMINI):
                 # Checking if the game is won - if so, we have already assigned a score for the master board.
-                game_over, winner = terminal_test(state.board_array[mb])
+                game_over, winner = terminal_test3x3(state.board_array[mb])
                 if not game_over:
                     # Game is not over. Checking if the current position is filled with the current player's sign.
                     if state.board_array[mb][i][j] == state.current.get_sign():
@@ -350,7 +367,7 @@ def play_game(p1 = None, p2 = None):
         s = result(s, action)
         # print(s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
-        game_over, winner = terminal_test(s.master, s)
+        game_over, winner = terminal_test(s)
         if game_over:
             print(s)
             print("Game Over")
@@ -366,7 +383,7 @@ def play_game(p1 = None, p2 = None):
         print(s)
         s = result(s, action)
         # print(s)
-        game_over, winner = terminal_test(s.master, s)
+        game_over, winner = terminal_test(s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         if game_over:
             print(s)
