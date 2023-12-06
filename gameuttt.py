@@ -435,9 +435,42 @@ def min_value(state, depth, player):
     return val, move
 
 
+def max_value_alpha_beta(state, depth, player, alpha, beta):
+    game_over, winner = terminal_test(state)
+    if game_over or depth == 0:
+        return heuristic(state, player), None
+    val = float('-inf')
+    for a in actions(state):
+        [v2, a2] = min_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
+        if v2 > val:
+            val, move = v2, a
+            alpha = max(alpha, val)
+        if val >= beta:
+            return val, move
+    # print("Move: ", move)
+    return val, move
+
+
+def min_value_alpha_beta(state, depth, player, alpha, beta):
+    game_over, winner = terminal_test(state)
+    if game_over or depth == 0:
+        return heuristic(state, player), None
+    val = float('inf')
+    for a in actions(state):
+        [v2, a2] = max_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
+        if v2 < val:
+            val, move = v2, a
+            beta = min(beta, val)
+        if val <= alpha:
+            return val, move
+    return val, move
+
+
+
 def main():
     p1 = players.RandomPlayer(X)
-    p1 = players.MinimaxPlayer(2, X)
+    # p1 = players.MinimaxPlayer(2, X)
+    p1 = players.AlphaBetaPlayer(2, X)
     p2 = players.RandomPlayer(O)
     play_game(p1, p2)
 

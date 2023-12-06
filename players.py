@@ -71,6 +71,17 @@ class MinimaxPlayer:
 
     def get_sign(self):
         return self.sign
-class AlphaBetaPlayer(UtttPlayerTemplate):
 
-    pass
+
+class AlphaBetaPlayer:
+    def __init__(self, depth_limit, player_char):
+        self.depth_limit = depth_limit
+        self.sign = player_char
+
+    def make_move(self, state):
+        value, move = game.max_value_alpha_beta(state, self.depth_limit, self.sign, float('-inf'), float('inf'))
+        return move
+
+    def get_sign(self):
+        return self.sign
+
