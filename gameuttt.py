@@ -24,11 +24,7 @@ class UtttState:
         self.other = otherplayer
         self.last_move = last_move
         self.master = big_to_master(self.board_array)
-        self.heuristic = heuristic(self)
-
-    # def master_to_smaller(self):
-    #     #will return the state of
-    #     pass
+        self.heuristic = heuristic(self, self.current.get_sign())
 
     def __repr__(self) -> str:
         new_string = "Last Action Chosen: " + str(self.last_move) + "     Player Turn: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
@@ -89,6 +85,19 @@ def terminal_test(state):
             winning_character = "Tie"
         return game_over, winning_character
 
+    # Checking if all of the slots are filled and no moves can be made
+    if not game_won:
+        slots_filled = True
+        for i in range(SIZEMINI):
+            for j in range(SIZEMINI):
+                if game.master[i][j] == EMPTY:
+                    slots_filled = False
+
+        if slots_filled:
+            game_won = True
+            winning_character = "Tie"
+
+
     return game_won, winning_character
 
 
@@ -130,18 +139,6 @@ def terminal_test3x3(mb):
         if tmp_char_diag == game[1][1] and tmp_char_diag == game[2][0]:
             game_won = True
             winning_character = tmp_char_diag
-
-    # Checking if all of the slots are filled and no moves can be made
-    if not game_won:
-        slots_filled = True
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                if game[i][j] == EMPTY:
-                    slots_filled = False
-
-        if slots_filled:
-            game_won = True
-            winning_character = "Tie"
 
 
     return game_won, winning_character
@@ -215,16 +212,16 @@ def actions(state):
                     legal_actions.append((mb,i,j))
         return legal_actions
 
-def heuristic(state):
+def heuristic(state, player):
     """Returns the heuristic value of the given state.
     This is the evaluation function for the state."""
     # Check if the game is over.
     game_over, winner = terminal_test(state)
     score = 0
     if game_over:
-        if winner == state.current.get_sign():
+        if winner == player:
             return 10000
-        elif winner == state.other.get_sign():
+        elif winner == otherPlayer(player):
             return -10000
         else:
             return 0
@@ -244,7 +241,7 @@ def heuristic(state):
     for i in range(SIZEMINI):
         for j in range(SIZEMINI):
             # Checking if the current position is filled with the current player's sign.
-            if state.master[i][j] == state.current.get_sign():
+            if state.master[i][j] == player:
                 # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
                 if check_if_center(i, j):
                     score += MASTER_CENTER
@@ -253,7 +250,7 @@ def heuristic(state):
                 if check_if_edge(i, j):
                     score += MASTER_EDGE
 
-            elif state.master[i][j] == state.other.get_sign():
+            elif state.master[i][j] == otherPlayer(player):
                 # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
                 if check_if_center(i, j):
                     score -= MASTER_CENTER
@@ -275,7 +272,7 @@ def heuristic(state):
                 game_over, winner = terminal_test3x3(state.board_array[mb])
                 if not game_over:
                     # Game is not over. Checking if the current position is filled with the current player's sign.
-                    if state.board_array[mb][i][j] == state.current.get_sign():
+                    if state.board_array[mb][i][j] == player:
                         # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
                         if check_if_center(i, j):
                             score += MINI_CENTER
@@ -284,7 +281,7 @@ def heuristic(state):
                         if check_if_edge(i, j):
                             score += MINI_EDGE
 
-                    elif state.board_array[mb][i][j] == state.other.get_sign():
+                    elif state.board_array[mb][i][j] == otherPlayer(player):
                         # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
                         if check_if_center(i, j):
                             score -= MINI_CENTER
@@ -354,7 +351,13 @@ def result(state, action):
         return new_state
 
 
-
+def otherPlayer(player):
+    # INPUT: PLAYER CHARACTER
+    # OUTPUT: OTHER PLAYER CHARACTER
+    if player == X:
+        return O
+    else:
+        return X
 
 
 
@@ -405,7 +408,20 @@ def play_game(p1 = None, p2 = None):
         #     display(s)
         #     display_final(s)
             return
-    
+
+def max_value(state, depth, player):
+    game_over, winner = terminal_test(state)
+    if game_over or depth == 0:
+        return state.heuristic, None
+    val = float('-inf')
+    for a in actions(state):
+        [v2, a2] = min_value(result(state, a), depth - 1, player)
+        if v2 > val:
+            val, move = v2, a
+    # print("Move: ", move)
+    return val, move
+
+
 def main():
     p1 = players.RandomPlayer(X)
     p2 = players.RandomPlayer(O)
