@@ -24,7 +24,8 @@ class UtttState:
         self.other = otherplayer
         self.last_move = last_move
         self.master = big_to_master(self.board_array)
-        self.heuristic = heuristic(self, self.current.get_sign())
+        # print(currentplayer.sign)
+        self.heuristic = heuristic(self, currentplayer.sign)
 
     def __repr__(self) -> str:
         new_string = "Last Action Chosen: " + str(self.last_move) + "     Player Turn: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
@@ -412,7 +413,7 @@ def play_game(p1 = None, p2 = None):
 def max_value(state, depth, player):
     game_over, winner = terminal_test(state)
     if game_over or depth == 0:
-        return state.heuristic, None
+        return heuristic(state, player), None
     val = float('-inf')
     for a in actions(state):
         [v2, a2] = min_value(result(state, a), depth - 1, player)
@@ -422,8 +423,21 @@ def max_value(state, depth, player):
     return val, move
 
 
+def min_value(state, depth, player):
+    game_over, winner = terminal_test(state)
+    if game_over or depth == 0:
+        return heuristic(state, player), None
+    val = float('inf')
+    for a in actions(state):
+        [v2, a2] = max_value(result(state, a), depth - 1, player)
+        if v2 < val:
+            val, move = v2, a
+    return val, move
+
+
 def main():
     p1 = players.RandomPlayer(X)
+    p1 = players.MinimaxPlayer(2, X)
     p2 = players.RandomPlayer(O)
     play_game(p1, p2)
 

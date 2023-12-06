@@ -7,6 +7,7 @@ class UtttPlayerTemplate:
     """Template class for UTTT player classes. This is inherited by all classes."""
     def __init__(self, mysign) -> None:
         self.sign = mysign
+
     
     def get_sign(self):
         return self.sign
@@ -60,30 +61,16 @@ class HumanPlayer(UtttPlayerTemplate):
         return curr_move
 
 
-# class MinimaxPlayer:
-#     def __init__(self, depth_limit, player_char):
-#         self.depth_limit = depth_limit
-#         self.player_char = player_char
-#     def make_move(self, state):
-#         value, move = max_value(state, self.depth_limit, self.player_char)
-#         return move
-#
-#
-#
-#
-#
+class MinimaxPlayer:
+    def __init__(self, depth_limit, player_char):
+        self.depth_limit = depth_limit
+        self.sign = player_char
+    def make_move(self, state):
+        value, move = game.max_value(state, self.depth_limit, self.sign)
+        return move
 
-#
-#
-# def min_value(state, depth, player):
-#     if terminal_test(state) or depth == 0:
-#         return utilityFunction(state, player), None
-#     val = float('inf')
-#     for a in actions(state):
-#         [v2, a2] = max_value(result(state, a), depth - 1, player)
-#         if v2 < val:
-#             val, move = v2, a
-#     return val, move
+    def get_sign(self):
+        return self.sign
 class AlphaBetaPlayer(UtttPlayerTemplate):
 
     pass
