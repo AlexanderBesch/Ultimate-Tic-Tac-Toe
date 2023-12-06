@@ -61,7 +61,9 @@ class HumanPlayer(UtttPlayerTemplate):
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
+
     pass
 
 class AlphaBetaPlayer(UtttPlayerTemplate):
+
     pass
