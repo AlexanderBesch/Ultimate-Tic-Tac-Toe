@@ -23,7 +23,7 @@ class UtttState:
         self.current = currentplayer
         self.other = otherplayer
         self.last_move = last_move
-        self.master = master_to_big(self.board_array)
+        self.master = big_to_master(self.board_array)
         # self.winner = None
         # game_won, winning_character = terminal_test(self.master, self)
         # if game_won:
@@ -35,7 +35,8 @@ class UtttState:
     #     pass
 
     def __repr__(self) -> str:
-        new_string = "-------------------------------------\n"
+        new_string = "Last Action Chosen: " + str(self.last_move) + "     Player Turn: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
+        new_string += "-------------------------------------\n"
         for m in range(SIZEMINI):
             for j in range(SIZEMINI):
                 new_string += "|  "
@@ -53,7 +54,7 @@ class UtttState:
             new_string += "|  "
             new_string += "\n"
         new_string += "-------------------------------------\n"
-        new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
+        # new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
         return new_string
 
     def print_subboard(self, num) -> str:
@@ -76,24 +77,27 @@ def terminal_test(gameBoard, state=None):
     winning_character = None
     game = copy.deepcopy(gameBoard)
 
-    if state is not None:
+    # Check if the game is in a tie
+    if state is not None: # 
         if actions(state) == []:
-            game_won = True
-            winning_character = state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]]
-            not_tie, tmp = terminal_test(state.master)
-            if not_tie != True:
+            game_won = True # assuming the game was won
+            winning_character = state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]] # initializing the winning character
+            not_tie, tmp = terminal_test(state.master) # Checking if the game is not a tie
+            if not_tie != True: # If the game is a tie, then the winning character is a tie
                 winning_character = "Tie"
             return game_won, winning_character
 
+    # Column and row test
     for j in range(3):
-        # Row Test
+        # Checking Rows to see if there is a winner
         tmp_char_row = game[j][0]
         if tmp_char_row != "-":
             if tmp_char_row == game[j][1] and tmp_char_row == game[j][2]:
                 game_won = True
                 winning_character = tmp_char_row
+            
 
-        # Column Test
+        # Checking Columns to see if there is a winner
         tmp_char_col = game[0][j]
         if tmp_char_col != "-":
             if tmp_char_col == game[1][j] and tmp_char_col == game[2][j]:
@@ -116,7 +120,7 @@ def terminal_test(gameBoard, state=None):
 
     return game_won, winning_character
 
-def master_to_big(game):
+def big_to_master(game):
     # INPUT: 9X3X3 MASTER GAME BOARD
     # OUTPUT: SMALLER 3X3 GAME BOARD REPRESENTING LARGER BOARD
 
@@ -347,8 +351,9 @@ def play_game(p1 = None, p2 = None):
             print("Illegal move made by X")
             print("O wins!")
             return
-        s = result(s, action)
         print(s)
+        s = result(s, action)
+        # print(s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         game_over, winner = terminal_test(s.master, s)
         if game_over:
@@ -362,8 +367,9 @@ def play_game(p1 = None, p2 = None):
             print("Illegal move made by O")
             print("O wins!")
             return
-        s = result(s, action)
         print(s)
+        s = result(s, action)
+        # print(s)
         game_over, winner = terminal_test(s.master, s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         if game_over:
