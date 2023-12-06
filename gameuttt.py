@@ -471,7 +471,8 @@ def main():
     p1 = players.RandomPlayer(X)
     # p1 = players.MinimaxPlayer(2, X)
     p1 = players.AlphaBetaPlayer(2, X)
-    p2 = players.RandomPlayer(O)
+    # p2 = players.RandomPlayer(O)
+    p2 = players.HumanPlayer(O)
     play_game(p1, p2)
 
 if __name__=='__main__':
