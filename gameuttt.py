@@ -253,7 +253,7 @@ def heuristic(state):
     # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
     MINI_CENTER = 5
     MINI_CORNER = 4
-    MINI_EDGE = 2
+    MINI_EDGE = 3
 
     for mb in range(SIZE):
         for i in range(SIZEMINI):
