@@ -131,6 +131,19 @@ def terminal_test3x3(mb):
             game_won = True
             winning_character = tmp_char_diag
 
+    # Checking if all of the slots are filled and no moves can be made
+    if not game_won:
+        slots_filled = True
+        for i in range(SIZEMINI):
+            for j in range(SIZEMINI):
+                if game[i][j] == EMPTY:
+                    slots_filled = False
+
+        if slots_filled:
+            game_won = True
+            winning_character = "Tie"
+
+
     return game_won, winning_character
 
 def big_to_master(game):
@@ -177,7 +190,7 @@ def actions(state):
 
     # Last move was not None.
     mb = state.last_move[1] * 3 + state.last_move[2]
-    game_over, tmp = terminal_test3x3(state.board_array[mb]) # USE MASTER BOARD INSTEAD OF TERMINAL TEST
+    game_over, tmp = terminal_test3x3(state.board_array[mb])  # USE MASTER BOARD INSTEAD OF TERMINAL TEST
 
     # Check if the mini board is full. If it is, then any move is possible that.
     if game_over:
