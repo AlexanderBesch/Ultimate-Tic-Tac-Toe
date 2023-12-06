@@ -28,6 +28,7 @@ class UtttState:
         # game_won, winning_character = terminal_test(self.master, self)
         # if game_won:
         #     self.winner = winning_character
+        self.heuristic = heuristic(self)
 
     # def master_to_smaller(self):
     #     #will return the state of
@@ -51,6 +52,8 @@ class UtttState:
                 new_string += self.master[i][j] + "  "
             new_string += "|  "
             new_string += "\n"
+        new_string += "-------------------------------------\n"
+        new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
         return new_string
 
     def print_subboard(self, num) -> str:
@@ -346,7 +349,7 @@ def play_game(p1 = None, p2 = None):
             return
         s = result(s, action)
         print(s)
-        print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
+        # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         game_over, winner = terminal_test(s.master, s)
         if game_over:
             print("Game Over")
@@ -362,7 +365,7 @@ def play_game(p1 = None, p2 = None):
         s = result(s, action)
         print(s)
         game_over, winner = terminal_test(s.master, s)
-        print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
+        # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
