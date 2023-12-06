@@ -353,6 +353,7 @@ def play_game(p1 = None, p2 = None):
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         game_over, winner = terminal_test(s.master, s)
         if game_over:
+            print(s)
             print("Game Over")
             print("Player " + winner + " wins!")
             # display(s)
@@ -369,6 +370,7 @@ def play_game(p1 = None, p2 = None):
         game_over, winner = terminal_test(s.master, s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         if game_over:
+            print(s)
             print("Game Over")
             print("Player " + winner + " wins!")
         #     display(s)
