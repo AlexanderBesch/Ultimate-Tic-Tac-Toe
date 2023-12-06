@@ -60,10 +60,40 @@ class HumanPlayer(UtttPlayerTemplate):
         return curr_move
 
 
-class MinimaxPlayer(UtttPlayerTemplate):
-
-    pass
-
+# class MinimaxPlayer:
+#     def __init__(self, depth_limit, player_char):
+#         self.depth_limit = depth_limit
+#         self.player_char = player_char
+#     def make_move(self, state):
+#         value, move = max_value(state, self.depth_limit, self.player_char)
+#         return move
+#
+#
+#
+#
+#
+# def max_value(state, depth, player):
+#     game_over, winner = game.terminal_test(state)
+#     if game_over or depth == 0:
+#         return state, None
+#     val = float('-inf')
+#     for a in actions(state):
+#         [v2, a2] = min_value(result(state, a), depth - 1, player)
+#         if v2 > val:
+#             val, move = v2, a
+#     # print("Move: ", move)
+#     return val, move
+#
+#
+# def min_value(state, depth, player):
+#     if terminal_test(state) or depth == 0:
+#         return utilityFunction(state, player), None
+#     val = float('inf')
+#     for a in actions(state):
+#         [v2, a2] = max_value(result(state, a), depth - 1, player)
+#         if v2 < val:
+#             val, move = v2, a
+#     return val, move
 class AlphaBetaPlayer(UtttPlayerTemplate):
 
     pass
