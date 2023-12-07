@@ -3,6 +3,7 @@ import copy
 from copy import deepcopy
 import players
 import time
+import threading
 
 # Defining Global Variables.
 EMPTY = '-'
@@ -499,6 +500,7 @@ def main():
 
     TESTING_ITERATIONS = 5
 
+    ts = time.time()
     # Running multiple iterations of the alpha-beta search
     p1 = players.AlphaBetaPlayer(2, X)
     p2 = players.RandomPlayer(O)
@@ -509,12 +511,26 @@ def main():
     p2 = players.RandomPlayer(O)
     print("Running minimax search test")
     score = search_test(p1, p2, TESTING_ITERATIONS)
+    t_stop = time.time()
+    print("Total time: ", t_stop - ts, "s")
 
 
-
-
-
-
+    # TRIED TO IMPLEMENT THREADING OF THE TWO PROCESSES. IT WAS NOT FASTER.
+    # THE FASTEST WAY IS RO RUN THE PROGRAM LIKE WE DID ABOVE.
+    # I AM LEAVING THE CODE IN CASE YOU KNOW HOW TO SPEED IT UP.
+    # p1 = players.AlphaBetaPlayer(2, X)
+    # p2 = players.RandomPlayer(O)
+    # t1 = threading.Thread(target=search_test, args=(p1, p2, TESTING_ITERATIONS,))
+    # p1 = players.MinimaxPlayer(2, X)
+    # p2 = players.RandomPlayer(O)
+    # t2 = threading.Thread(target=search_test, args=(p1, p2, TESTING_ITERATIONS,))
+    # ts = time.time()
+    # t1.start()
+    # t2.start()
+    # t1.join()
+    # t2.join()
+    # t_stop = time.time()
+    # print("Total time: ", t_stop - ts, "s")
 
 if __name__=='__main__':
     main()
