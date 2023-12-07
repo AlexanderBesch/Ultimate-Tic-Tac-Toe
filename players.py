@@ -23,7 +23,7 @@ class RandomPlayer(UtttPlayerTemplate):
     """Randomly playing agent for the game."""
     def make_move(self, state):
         legal_actions = game.actions(state)
-        print("Legal Actions:",legal_actions)
+        # print("Legal Actions:",legal_actions)
         move = choice(legal_actions)
         return move
 

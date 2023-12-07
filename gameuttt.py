@@ -2,6 +2,7 @@
 import copy
 from copy import deepcopy
 import players
+import time
 
 # Defining Global Variables.
 EMPTY = '-'
@@ -377,38 +378,38 @@ def play_game(p1 = None, p2 = None):
     while True:
         action = p1.make_move(s)
         if action not in actions(s):
-            print("Illegal move made by X")
-            print("O wins!")
-            return
-        print(s)
+            # print("Illegal move made by X")
+            # print("O wins!")
+            return None
+        # print(s)
         s = result(s, action)
         # print(s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         game_over, winner = terminal_test(s)
         if game_over:
-            print(s)
-            print("Game Over")
-            print("Player " + winner + " wins!")
+            # print(s)
+            # print("Game Over")
+            # print("Player " + winner + " wins!")
             # display(s)
             # display_final(s)
-            return
+            return winner
         action = p2.make_move(s)
         if action not in actions(s):
-            print("Illegal move made by O")
-            print("O wins!")
-            return
-        print(s)
+            # print("Illegal move made by O")
+            # print("O wins!")
+            return None
+        # print(s)
         s = result(s, action)
         # print(s)
         game_over, winner = terminal_test(s)
         # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
         if game_over:
-            print(s)
-            print("Game Over")
-            print("Player " + winner + " wins!")
+            # print(s)
+            # print("Game Over")
+            # print("Player " + winner + " wins!")
         #     display(s)
         #     display_final(s)
-            return
+            return winner
 
 def max_value(state, depth, player):
     game_over, winner = terminal_test(state)
@@ -466,14 +467,54 @@ def min_value_alpha_beta(state, depth, player, alpha, beta):
     return val, move
 
 
+def search_test(player1, player2, num_iterations=1):
+    score = [0, 0, 0]      # [player1, player2, tie]
+    ts = time.time()
+    for i in range(num_iterations):
+        print("Iteration: ", i+1, "/", num_iterations, "  Score: ", score, "[P1, P2, Tie]")
+        winner = play_game(player1, player2)
+        if winner == player1.get_sign():
+            score[0] += 1
+        elif winner == player2.get_sign():
+            score[1] += 1
+        elif winner == "Tie":
+            score[2] += 1
+        else:
+            raise Exception("Winner not recognized")
+    t_stop = time.time()
+    print("Final score: [P1, P2, Tie]", score)
+    print("Computational time: ", t_stop - ts, "s    Average: ", (t_stop - ts)/num_iterations, "s")
+    return score
+
+
 
 def main():
     p1 = players.RandomPlayer(X)
     # p1 = players.MinimaxPlayer(2, X)
+    # p2 = players.HumanPlayer(O)
+
+
+    # winner = play_game(p1, p2)
+    # print("Winner: ", winner)
+
+    TESTING_ITERATIONS = 5
+
+    # Running multiple iterations of the alpha-beta search
     p1 = players.AlphaBetaPlayer(2, X)
-    # p2 = players.RandomPlayer(O)
-    p2 = players.HumanPlayer(O)
-    play_game(p1, p2)
+    p2 = players.RandomPlayer(O)
+    print("Running alpha-beta search test")
+    score = search_test(p1, p2, TESTING_ITERATIONS)
+
+    p1 = players.MinimaxPlayer(2, X)
+    p2 = players.RandomPlayer(O)
+    print("Running minimax search test")
+    score = search_test(p1, p2, TESTING_ITERATIONS)
+
+
+
+
+
+
 
 if __name__=='__main__':
     main()
