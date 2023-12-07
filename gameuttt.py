@@ -493,8 +493,6 @@ def main():
     p1 = players.RandomPlayer(X)
     # p1 = players.MinimaxPlayer(2, X)
     # p2 = players.HumanPlayer(O)
-
-
     # winner = play_game(p1, p2)
     # print("Winner: ", winner)
 
