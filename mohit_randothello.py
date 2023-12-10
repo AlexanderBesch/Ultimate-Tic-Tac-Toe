@@ -603,7 +603,6 @@ def main():
     # print(new_board.board_array)
     print(new_board)
 
-
 if __name__ == '__main__':  
     main()
     

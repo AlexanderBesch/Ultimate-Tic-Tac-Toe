@@ -1,7 +1,7 @@
 import random
 import copy
 import time
-import GameClass
+import alex_randothello
 
 WHITE = 1
 BLACK = -1

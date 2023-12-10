@@ -9,15 +9,23 @@ import threading
 EMPTY = '-'
 X = 'X'
 O = "O"
+T = "Tie"
 SIZE = 9
 SIZEMINI = 3
-
+WINNING_POSITIONS = [((0,0),(0,1),(0,2)),
+                     ((1,0),(1,1),(1,2)),
+                     ((2,0),(2,1),(2,2)),
+                     ((0,0),(1,0),(2,0)),
+                     ((0,1),(1,1),(2,1)),
+                     ((0,2),(1,2),(2,2)),
+                     ((0,0),(1,1),(2,2)),
+                     ((0,2),(1,1),(2,0))]
 
 
 class UtttState:
     '''A class to represent a state in Uttt game.'''
     ### Board is created such that to access a element at the center of middle board. WE say [4][1][1]
-    def __init__(self, currentplayer, otherplayer,last_move = None, board_array = None, big_board_array = None):
+    def __init__(self, currentplayer, otherplayer, last_move = None, board_array = None):
         if board_array != None:
             self.board_array = board_array
         else:
@@ -25,12 +33,11 @@ class UtttState:
         self.current = currentplayer
         self.other = otherplayer
         self.last_move = last_move
-        self.master = big_to_master(self.board_array)
-        # print(currentplayer.sign)
-        self.heuristic = heuristic(self, currentplayer.sign)
+        self.master_board = build_master(self.board_array)
+        # self.heuristic = heuristic(self, currentplayer.sign)
 
     def __repr__(self) -> str:
-        new_string = "Last Action Chosen: " + str(self.last_move) + "     Player Turn: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
+        new_string = "Last Action Chosen: " + str(self.last_move) + "     Player Turn: " + str(self.current.get_sign()) +  "\n"
         new_string += "-------------------------------------\n"
         for m in range(SIZEMINI):
             for j in range(SIZEMINI):
@@ -41,14 +48,16 @@ class UtttState:
                     new_string += "|  "
                 new_string += "\n"
             new_string += "-------------------------------------\n"
-        new_string += " ###### MASTER BOARD ######\n"
+
+        new_string += " ## MASTER BOARD ##\n"
+        new_string += "-------------\n"
         for i in range(SIZEMINI):
             new_string += "|  "
             for j in range(SIZEMINI):
-                new_string += self.master[i][j] + "  "
+                new_string += self.master_board[i][j] + "  "
             new_string += "|  "
             new_string += "\n"
-        new_string += "-------------------------------------\n"
+        new_string += "-------------\n"
         # new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
         return new_string
 
@@ -64,105 +73,39 @@ class UtttGame:
     """A class to encapsulate the variable and methods for the Uttt game."""
     pass
 
-
 def terminal_test(state):
     # INPUT: 3X3 GAME BOARD
     # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
+    return terminal_test_mini(state.master_board)
 
-    game_won = False
-    winning_character = None
-    game = copy.deepcopy(state)
+def terminal_test_mini(mini_board):
+    """Terminal test for Mini Boards. Input is the 3*3 array and outputs wheather the game has ended and the character who won or T if tied."""
+    for positions in WINNING_POSITIONS:
+        a,b,c = positions
+        if (mini_board[a[0]][a[1]] != EMPTY) and (mini_board[a[0]][a[1]] != T):
+            if (mini_board[a[0]][a[1]] == mini_board[b[0]][b[1]] == mini_board[c[0]][c[1]]):
+                return True, mini_board[a[0]][a[1]]
+    ## It might be the case that a mini board has tied.
+    ## Now check for tie. In our game Tie only happens if all the board pieces have been filed and there is yet no winner.
+    for i in range(SIZEMINI):
+        for j in range(SIZEMINI):
+            if mini_board[i][j] == EMPTY:
+                # Id any empty place is found that means we have not Tied.
+                return False, None
+    ## We reached here means the board is not won yet and it is a Tie.
+    return True, T
 
-    # Check if the master board is won
-    game_won, winning_character = terminal_test3x3(game.master)
-    if game_won:
-        return game_won, winning_character
-
-    # Master board is not conventionally won.
-    # Check if the game is in a tie
-    if actions(state) == []:
-        game_over = True  # assuming the game is over
-        winning_character = ""  # state.board_array[state.last_move[0]][state.last_move[1]][state.last_move[2]] # initializing the winning character
-        not_tie, tmp = terminal_test3x3(state.master)  # Checking if the game is not a tie
-        if not not_tie:  # If the game is a tie, then the winning character is a tie
-            winning_character = "Tie"
-        return game_over, winning_character
-
-    # Checking if all of the slots are filled and no moves can be made
-    if not game_won:
-        slots_filled = True
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                if game.master[i][j] == EMPTY:
-                    slots_filled = False
-
-        if slots_filled:
-            game_won = True
-            winning_character = "Tie"
-
-
-    return game_won, winning_character
-
-
-def terminal_test3x3(mb):
-    # INPUT: 3X3 GAME BOARD
-    # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
-
-    game_won = False
-    winning_character = None
-    game = copy.deepcopy(mb)
-
-    # Column and row test
-    for j in range(3):
-        # Checking Rows to see if there is a winner
-        tmp_char_row = game[j][0]
-        if tmp_char_row != "-":
-            if tmp_char_row == game[j][1] and tmp_char_row == game[j][2]:
-                game_won = True
-                winning_character = tmp_char_row
-            
-
-        # Checking Columns to see if there is a winner
-        tmp_char_col = game[0][j]
-        if tmp_char_col != "-":
-            if tmp_char_col == game[1][j] and tmp_char_col == game[2][j]:
-                game_won = True
-                winning_character = tmp_char_col
-
-    # Diagonal Test this way -> \
-    tmp_char_diag = game[0][0]
-    if tmp_char_diag != "-":
-        if tmp_char_diag == game[1][1] and tmp_char_diag == game[2][2]:
-            game_won = True
-            winning_character = tmp_char_diag
-
-    # Diagonal Test this way -> /
-    tmp_char_diag = game[0][2]
-    if tmp_char_diag != "-":
-        if tmp_char_diag == game[1][1] and tmp_char_diag == game[2][0]:
-            game_won = True
-            winning_character = tmp_char_diag
-
-
-    return game_won, winning_character
-
-def big_to_master(game):
+def build_master(game):
+    """This is time consuming funtion should be used with causion."""
     # INPUT: 9X3X3 MASTER GAME BOARD
     # OUTPUT: SMALLER 3X3 GAME BOARD REPRESENTING LARGER BOARD
-
-    return_game = [[" ", " ", " "],
-                    [" ", " ", " "],
-                    [" ", " ", " "]]
-    for i in range(9):
-        ind_game = game[i]
-        game_won, winning_character = terminal_test3x3(ind_game)
+    return_game = [[EMPTY] * SIZEMINI for _ in range(SIZEMINI)]
+    for i in range(SIZE):
+        mini_board = game[i]
+        game_won, winner = terminal_test_mini(mini_board)
         if game_won:
-            char = winning_character
-        else:
-            char = EMPTY
-        return_game[i//3][i%3] = char
+            return_game[i//3][i%3] = winner
     return return_game
-
 
 ## Change Legal actions to account for when the selected board is full,
 #  and hence the player can move anywhere on the board.
@@ -171,171 +114,82 @@ def actions(state):
     Actions look like (i,x,y), where i the mini board number and x,y
     represent the row and column of the place in mini board."""
     legal_actions = []
-    mb = 10
 
-    # Check if the last move was None.
-    if state.last_move is None:
-        possible_mini_boards = []
-        for mini_board in range(SIZE):
-            game_over, tmp = terminal_test3x3(state.board_array[mini_board])
-            if not game_over:
-                possible_mini_boards.append(mini_board)
-        # Last move was None, so any move is possible.
-        for mini_board in possible_mini_boards:
+    ## If this is the first move.
+    if state.last_move == None:
+        # All actions are legal.
+        # mb stands for miniboard,
+        for mb in range(SIZE):
             for i in range(SIZEMINI):
                 for j in range(SIZEMINI):
-                    if state.board_array[mini_board][i][j] == EMPTY:
-                        legal_actions.append((mini_board,i,j))
-        return legal_actions
+                    legal_actions.append((mb,i,j))
+    else:
+        # There was some last move.
+        last_mb, last_i, last_j = state.last_move
+        # Find the new legal mb from last i,j.
+        mb = 3*last_i + last_j
+        # We need to check that this mb is empty in the master board or else we need to give all other open boards as legal moves.
+        if state.master_board[mb//3][mb%3] == EMPTY:
+            for i in range(3):
+                for j in range(3):
+                    if state.board_array[mb][i][j]==EMPTY:
+                        legal_actions.append((mb,i,j))
+        else:
+            # This is when the master_board has Tie or Has been won.
+            # Add all mb to the possible boards.
+            possible_mb = []
+            for i in range(SIZEMINI):
+                for j in range(SIZEMINI):
+                    if state.master_board[i][j] == EMPTY:
+                        possible_mb.append(3*i + j)
+            for mb in possible_mb:
+                for i in range(SIZEMINI):
+                    for j in range(SIZEMINI):
+                        if state.board_array[mb][i][j]==EMPTY:
+                            legal_actions.append((mb,i,j))
+    return legal_actions
+
+    # # Check if the last move was None. Last move can be None only when the game starts.
+    # if state.last_move is None:
+    #     possible_mini_boards = []
+    #     for mini_board in range(SIZE):
+    #         game_over, tmp = terminal_test3x3(state.board_array[mini_board])
+    #         if not game_over:
+    #             possible_mini_boards.append(mini_board)
+    #     # Last move was None, so any move is possible.
+    #     for mini_board in possible_mini_boards:
+    #         for i in range(SIZEMINI):
+    #             for j in range(SIZEMINI):
+    #                 if state.board_array[mini_board][i][j] == EMPTY:
+    #                     legal_actions.append((mini_board,i,j))
+    #     return legal_actions
 
     # Last move was not None.
-    mb = state.last_move[1] * 3 + state.last_move[2]
-    game_over, tmp = terminal_test3x3(state.board_array[mb])  # USE MASTER BOARD INSTEAD OF TERMINAL TEST
+    # mb = state.last_move[1] * 3 + state.last_move[2]
+    # game_over, tmp = terminal_test3x3(state.board_array[mb])  # USE MASTER BOARD INSTEAD OF TERMINAL TEST
 
-    # Check if the mini board is full. If it is, then any move is possible that.
-    if game_over:
-        possible_mini_boards = []
-        for mini_board in range(SIZE):
-            game_over, tmp = terminal_test3x3(state.board_array[mini_board])
-            if not game_over:
-                possible_mini_boards.append(mini_board)
-        # Last move was None, so any move is possible.
-        for mini_board in possible_mini_boards:
-            for i in range(SIZEMINI):
-                for j in range(SIZEMINI):
-                    if state.board_array[mini_board][i][j] == EMPTY:
-                        legal_actions.append((mini_board, i, j))
-        return legal_actions
-
-    else:
-        # Last move was not None, and the mini board is not full. Return all empty mini board positions.
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                if state.board_array[mb][i][j] == EMPTY:
-                    legal_actions.append((mb,i,j))
-        return legal_actions
-
-def heuristic(state, player):
-    """Returns the heuristic value of the given state.
-    This is the evaluation function for the state."""
-    # Check if the game is over.
-    game_over, winner = terminal_test(state)
-    score = 0
-    if game_over:
-        if winner == player:
-            return 10000
-        elif winner == otherPlayer(player):
-            return -10000
-        else:
-            return 0
-
-    # Game is not over.
-    # Check if the last move was None.
-    if state.last_move is None:
-        # Last move was None, so any move is possible. therefore the board is empty and the score is 0
-        return 0
-
-    # SCORES FOR THE MASTER BOARD
-    MASTER_CENTER = 500
-    MASTER_CORNER = 400
-    MASTER_EDGE = 300
-
-    # Find the number of positions on the master board that are filled. Give each of these a high score
-    for i in range(SIZEMINI):
-        for j in range(SIZEMINI):
-            # Checking if the current position is filled with the current player's sign.
-            if state.master[i][j] == player:
-                # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                if check_if_center(i, j):
-                    score += MASTER_CENTER
-                if check_if_corner(i, j):
-                    score += MASTER_CORNER
-                if check_if_edge(i, j):
-                    score += MASTER_EDGE
-
-            elif state.master[i][j] == otherPlayer(player):
-                # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                if check_if_center(i, j):
-                    score -= MASTER_CENTER
-                if check_if_corner(i, j):
-                    score -= MASTER_CORNER
-                if check_if_edge(i, j):
-                    score -= MASTER_EDGE
-
-
-    # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
-    MINI_CENTER = 5
-    MINI_CORNER = 4
-    MINI_EDGE = 3
-
-    for mb in range(SIZE):
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                # Checking if the game is won - if so, we have already assigned a score for the master board.
-                game_over, winner = terminal_test3x3(state.board_array[mb])
-                if not game_over:
-                    # Game is not over. Checking if the current position is filled with the current player's sign.
-                    if state.board_array[mb][i][j] == player:
-                        # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score += MINI_CENTER
-                        if check_if_corner(i, j):
-                            score += MINI_CORNER
-                        if check_if_edge(i, j):
-                            score += MINI_EDGE
-
-                    elif state.board_array[mb][i][j] == otherPlayer(player):
-                        # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score -= MINI_CENTER
-                        if check_if_corner(i, j):
-                            score -= MINI_CORNER
-                        if check_if_edge(i, j):
-                            score -= MINI_EDGE
-
-
-
-    return score
     # # Check if the mini board is full. If it is, then any move is possible that.
     # if game_over:
-    #     return 0
-    #
+    #     possible_mini_boards = []
+    #     for mini_board in range(SIZE):
+    #         game_over, tmp = terminal_test3x3(state.board_array[mini_board])
+    #         if not game_over:
+    #             possible_mini_boards.append(mini_board)
+    #     # Last move was None, so any move is possible.
+    #     for mini_board in possible_mini_boards:
+    #         for i in range(SIZEMINI):
+    #             for j in range(SIZEMINI):
+    #                 if state.board_array[mini_board][i][j] == EMPTY:
+    #                     legal_actions.append((mini_board, i, j))
+    #     return legal_actions
+
     # else:
     #     # Last move was not None, and the mini board is not full. Return all empty mini board positions.
-    #     return 0
-
-def check_if_center(i, j):
-    if i == 1 and j == 1:
-        return True
-    else:
-        return False
-
-def check_if_corner(i, j):
-    if i == 0 and j == 0:
-        return True
-    elif i == 0 and j == 2:
-        return True
-    elif i == 2 and j == 0:
-        return True
-    elif i == 2 and j == 2:
-        return True
-    else:
-        return False
-
-def check_if_edge(i, j):
-    if i == 0 and j == 1:
-        return True
-    elif i == 1 and j == 0:
-        return True
-    elif i == 1 and j == 2:
-        return True
-    elif i == 2 and j == 1:
-        return True
-    else:
-        return False
-
-
-
+    #     for i in range(SIZEMINI):
+    #         for j in range(SIZEMINI):
+    #             if state.board_array[mb][i][j] == EMPTY:
+    #                 legal_actions.append((mb,i,j))
+    #     return legal_actions
 
 def result(state, action):
     """Returns the resulting state after taking the given action. 
@@ -352,89 +206,6 @@ def result(state, action):
         new_board[mb][i][j] = state.current.sign
         new_state = UtttState(state.other, state.current , last_move = action, board_array = new_board)
         return new_state
-
-
-def otherPlayer(player):
-    # INPUT: PLAYER CHARACTER
-    # OUTPUT: OTHER PLAYER CHARACTER
-    if player == X:
-        return O
-    else:
-        return X
-
-
-
-
-# def terminal_test(state):
-#     raise NotImplementedError
-
-def play_game(p1 = None, p2 = None):
-    """Play the game with two players. Default use two humans."""
-    if p1 == None:
-        p1 = HumanPlayer(X)
-    if p2 == None:
-        p2 = HumanPlayer(O)
-
-    s = UtttState(p1, p2)
-    while True:
-        action = p1.make_move(s)
-        if action not in actions(s):
-            # print("Illegal move made by X")
-            # print("O wins!")
-            return None
-        # print(s)
-        s = result(s, action)
-        # print(s)
-        # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
-        game_over, winner = terminal_test(s)
-        if game_over:
-            # print(s)
-            # print("Game Over")
-            # print("Player " + winner + " wins!")
-            # display(s)
-            # display_final(s)
-            return winner
-        action = p2.make_move(s)
-        if action not in actions(s):
-            # print("Illegal move made by O")
-            # print("O wins!")
-            return None
-        # print(s)
-        s = result(s, action)
-        # print(s)
-        game_over, winner = terminal_test(s)
-        # print("Heuristic: ", heuristic(s), " Current Player: ", s.current.get_sign())
-        if game_over:
-            # print(s)
-            # print("Game Over")
-            # print("Player " + winner + " wins!")
-        #     display(s)
-        #     display_final(s)
-            return winner
-
-def max_value(state, depth, player):
-    game_over, winner = terminal_test(state)
-    if game_over or depth == 0:
-        return heuristic(state, player), None
-    val = float('-inf')
-    for a in actions(state):
-        [v2, a2] = min_value(result(state, a), depth - 1, player)
-        if v2 > val:
-            val, move = v2, a
-    # print("Move: ", move)
-    return val, move
-
-
-def min_value(state, depth, player):
-    game_over, winner = terminal_test(state)
-    if game_over or depth == 0:
-        return heuristic(state, player), None
-    val = float('inf')
-    for a in actions(state):
-        [v2, a2] = max_value(result(state, a), depth - 1, player)
-        if v2 < val:
-            val, move = v2, a
-    return val, move
 
 
 def max_value_alpha_beta(state, depth, player, alpha, beta):
@@ -478,7 +249,7 @@ def search_test(player1, player2, num_iterations=1):
             score[0] += 1
         elif winner == player2.get_sign():
             score[1] += 1
-        elif winner == "Tie":
+        elif winner == T:
             score[2] += 1
         else:
             raise Exception("Winner not recognized")
@@ -488,29 +259,65 @@ def search_test(player1, player2, num_iterations=1):
     return score
 
 
+def play_game(p1 = None, p2 = None):
+    """Play the game with two players. Default use two humans."""
+    if p1 == None:
+        p1 = players.HumanPlayer(X)
+    if p2 == None:
+        p2 = players.HumanPlayer(O)
+
+    s = UtttState(p1, p2)
+    # while True:
+    for i in range(20):
+        action = p1.make_move(s)
+        if action not in actions(s):
+            # print("Illegal move made by X")
+            # print("O wins!")
+            return None
+        s = result(s, action)
+        print(s)
+        game_over, winner = terminal_test(s)
+        if game_over:
+            print("Game Over")
+            print("Player " + winner + " wins!")
+            return winner
+        action = p2.make_move(s)
+        if action not in actions(s):
+            # print("Illegal move made by O")
+            # print("O wins!")
+            return None
+        # print(s)
+        s = result(s, action)
+        print(s)
+        game_over, winner = terminal_test(s)
+        if game_over:
+            print("Game Over")
+            print("Player " + winner + " wins!")
+            return winner
+    print('Debug here.')
+    print(s)
+    p1.heuristic(s)
+
 
 def main():
-    p1 = players.RandomPlayer(X)
-    # p1 = players.MinimaxPlayer(2, X)
-    # p2 = players.HumanPlayer(O)
-    # winner = play_game(p1, p2)
-    # print("Winner: ", winner)
+    p1 = players.AlphaBetaPlayerV2(O,4)
+    p2 = players.AlphaBetaPlayer(X,4)
+    # st = UtttState(p1,p2)
 
-    TESTING_ITERATIONS = 5
+    # p2.heuristic(st)
 
-    ts = time.time()
+    play_game(p1,p2)
+
+    iters = 20
     # Running multiple iterations of the alpha-beta search
-    p1 = players.AlphaBetaPlayer(2, X)
-    p2 = players.RandomPlayer(O)
-    print("Running alpha-beta search test")
-    score = search_test(p1, p2, TESTING_ITERATIONS)
-
-    p1 = players.MinimaxPlayer(2, X)
-    p2 = players.RandomPlayer(O)
-    print("Running minimax search test")
-    score = search_test(p1, p2, TESTING_ITERATIONS)
-    t_stop = time.time()
-    print("Total time: ", t_stop - ts, "s")
+    # score = search_test(p1, p2, iters)
+    # print(score)
+    # p1 = players.MinimaxPlayer(2, X)
+    # p2 = players.RandomPlayer(O)
+    # print("Running minimax search test")
+    # score = search_test(p1, p2, TESTING_ITERATIONS)
+    # t_stop = time.time()
+    # print("Total time: ", t_stop - ts, "s")
 
 
     # TRIED TO IMPLEMENT THREADING OF THE TWO PROCESSES. IT WAS NOT FASTER.
@@ -529,6 +336,8 @@ def main():
     # t2.join()
     # t_stop = time.time()
     # print("Total time: ", t_stop - ts, "s")
+
+print_player_moves = True
 
 if __name__=='__main__':
     main()
