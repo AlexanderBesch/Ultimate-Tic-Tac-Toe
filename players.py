@@ -8,7 +8,6 @@ class UtttPlayerTemplate:
     def __init__(self, mysign) -> None:
         self.sign = mysign
 
-    
     def get_sign(self):
         return self.sign
     
