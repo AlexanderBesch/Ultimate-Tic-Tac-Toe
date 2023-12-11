@@ -7,7 +7,7 @@ from random import choice
 EMPTY = '-'
 X = 'X'
 O = "O"
-T = "Tie"
+T = "T"
 SIZE = 9
 SIZEMINI = 3
 WINNING_POSITIONS = [((0, 0), (0, 1), (0, 2)),
