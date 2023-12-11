@@ -4,7 +4,8 @@ from copy import deepcopy
 import time
 import threading
 import heuristics as heu
-import matplotlib as plt
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Defining Global Variables.
 EMPTY = '-'
@@ -180,37 +181,6 @@ def result(state, action):
         new_state = UtttState(state.other, state.current, last_move=action, board_array=new_board, num_moves=state.num_moves + 1)
         return new_state
 
-#
-# def max_value_alpha_beta(state, depth, player, alpha, beta):
-#     game_over, winner = terminal_test(state)
-#     if game_over or depth == 0:
-#         return heuristic(state, player), None
-#     val = float('-inf')
-#     for a in actions(state):
-#         [v2, a2] = min_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
-#         if v2 > val:
-#             val, move = v2, a
-#             alpha = max(alpha, val)
-#         if val >= beta:
-#             return val, move
-#     # print("Move: ", move)
-#     return val, move
-#
-#
-# def min_value_alpha_beta(state, depth, player, alpha, beta):
-#     game_over, winner = terminal_test(state)
-#     if game_over or depth == 0:
-#         return heuristic(state, player), None
-#     val = float('inf')
-#     for a in actions(state):
-#         [v2, a2] = max_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
-#         if v2 < val:
-#             val, move = v2, a
-#             beta = min(beta, val)
-#         if val <= alpha:
-#             return val, move
-#     return val, move
-
 
 def search_test(player1, player2, num_iterations=1, printouts=True):
     score = [0, 0, 0]  # [player1, player2, tie]
@@ -273,7 +243,7 @@ def play_game(p1=None, p2=None, printouts=True):
     # # print(s)
     # p1.heuristic(s)
 
-def plot():
+def plot(x_axis, y_axis, title, x_label, y_label):
     # creating the dataset
     data = {'C': 20, 'C++': 15, 'Java': 30,
             'Python': 35}
@@ -283,7 +253,7 @@ def plot():
     fig = plt.figure(figsize=(10, 5))
 
     # creating the bar plot
-    plt.bar(courses, values, color='maroon',
+    plt.bar(x_axis, y_axis, color='maroon',
             width=0.4)
 
     plt.xlabel("Courses offered")
@@ -305,11 +275,6 @@ def main():
     p2 = players.AlphaBetaPlayer(X, 5, heu.pulkit_github)
     # play_game(p1, p2)
 
-    # st = UtttState(p1,p2)
-
-    # p2.heuristic(st)
-
-
 
     iters = 20
     print("Running homemadeV2 vs PulkitGithub test")
@@ -319,22 +284,7 @@ def main():
     print("Score: [homemadev2wins, pulkitwins, ties", score)
     # print("Total time: ", t_stop - ts, "s")
 
-    # TRIED TO IMPLEMENT THREADING OF THE TWO PROCESSES. IT WAS NOT FASTER.
-    # THE FASTEST WAY IS RO RUN THE PROGRAM LIKE WE DID ABOVE.
-    # I AM LEAVING THE CODE IN CASE YOU KNOW HOW TO SPEED IT UP.
-    # p1 = players.AlphaBetaPlayer(2, X)
-    # p2 = players.RandomPlayer(O)
-    # t1 = threading.Thread(target=search_test, args=(p1, p2, TESTING_ITERATIONS,))
-    # p1 = players.MinimaxPlayer(2, X)
-    # p2 = players.RandomPlayer(O)
-    # t2 = threading.Thread(target=search_test, args=(p1, p2, TESTING_ITERATIONS,))
-    # ts = time.time()
-    # t1.start()
-    # t2.start()
-    # t1.join()
-    # t2.join()
-    # t_stop = time.time()
-    # print("Total time: ", t_stop - ts, "s")
+    # plot()
 
 
 # print_player_moves = False
