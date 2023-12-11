@@ -4,20 +4,18 @@ import gameuttt as game
 from random import choice
 
 # Defining Global Variables.
-EMPTY = '-'
-X = 'X'
-O = "O"
-T = "T"
-SIZE = 9
-SIZEMINI = 3
-WINNING_POSITIONS = [((0, 0), (0, 1), (0, 2)),
-                     ((1, 0), (1, 1), (1, 2)),
-                     ((2, 0), (2, 1), (2, 2)),
-                     ((0, 0), (1, 0), (2, 0)),
-                     ((0, 1), (1, 1), (2, 1)),
-                     ((0, 2), (1, 2), (2, 2)),
-                     ((0, 0), (1, 1), (2, 2)),
-                     ((0, 2), (1, 1), (2, 0))]
+# Global variables are defined in gameuttt.py
+
+# GLOBAL VARIABLES - Defined in gameuttt.py
+# global_vars = [EMPTY, X, O, T, SIZE, SIZEMINI, WINNING_POSITIONS]
+
+EMPTY = game.global_vars[0]
+X = game.global_vars[1]
+O = game.global_vars[2]
+T = game.global_vars[3]
+SIZE = game.global_vars[4]
+SIZEMINI = game.global_vars[5]
+WINNING_POSITIONS = game.global_vars[6]
 
 
 class UtttPlayerTemplate:

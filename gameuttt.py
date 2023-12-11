@@ -21,6 +21,7 @@ WINNING_POSITIONS = [((0, 0), (0, 1), (0, 2)),
                      ((0, 0), (1, 1), (2, 2)),
                      ((0, 2), (1, 1), (2, 0))]
 
+global_vars = [EMPTY, X, O, T, SIZE, SIZEMINI, WINNING_POSITIONS]
 
 class UtttState:
     '''A class to represent a state in Uttt game.'''
@@ -268,8 +269,8 @@ def play_game(p1=None, p2=None):
 
 
 def main():
-    p1 = players.AlphaBetaPlayer(O, 5)
-    p2 = players.AlphaBetaPlayer(X, 6)
+    p1 = players.RandomPlayer(O)
+    p2 = players.AlphaBetaPlayer(X, 7)
     # st = UtttState(p1,p2)
 
     # p2.heuristic(st)
