@@ -2,6 +2,8 @@
 # Import the other file funtions here, check this at end.
 import gameuttt as game
 from random import choice
+import heuristics as heu
+
 
 # Defining Global Variables.
 # Global variables are defined in gameuttt.py
@@ -83,9 +85,10 @@ class HumanPlayer(UtttPlayerTemplate):
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit):
+    def __init__(self, mysign, depth_limit, heuristic):
         self.depth_limit = depth_limit
         self.sign = mysign
+        self.heuristicfcn = heuristic
 
     def make_move(self, state):
         move = self.minimax_search(state)
@@ -134,91 +137,93 @@ class MinimaxPlayer(UtttPlayerTemplate):
         return v, move
 
     def heuristic(self, state):
-        """Returns the heuristic value of the given state.
-        This is the evaluation function for the state."""
-        # Check if the game is over.
-        game_over, winner = game.terminal_test(state)
-        score = 0
-        player = self.sign
-        if player == X:
-            otherplayer = O
-        else:
-            otherplayer = X
-
-        if game_over:
-            if winner == player:
-                return 10000
-            elif winner == otherplayer:
-                return -10000
-            else:
-                return -1000
-
-        # Game is not over.
-
-        # SCORES FOR THE MASTER BOARD
-        master_center = 500
-        master_corner = 400
-        master_edge = 300
-
-        # Find the number of positions on the master board that are filled. Give each of these a high score
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                # Checking if the current position is filled with the current player's sign.
-                if state.master_board[i][j] == player:
-                    # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                    if check_if_center(i, j):
-                        score += master_center
-                    if check_if_corner(i, j):
-                        score += master_corner
-                    if check_if_edge(i, j):
-                        score += master_edge
-                elif state.master_board[i][j] == otherplayer:
-                    # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                    if check_if_center(i, j):
-                        score -= master_center
-                    if check_if_corner(i, j):
-                        score -= master_corner
-                    if check_if_edge(i, j):
-                        score -= master_edge
-
-        # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
-        mini_center = 5
-        mini_corner = 4
-        mini_edge = 3
-
-        possible_mb = []
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                if state.master_board[i][j] == EMPTY:
-                    possible_mb.append(3 * i + j)
-        for mb in possible_mb:
-            for i in range(SIZEMINI):
-                for j in range(SIZEMINI):
-                    if state.board_array[mb][i][j] == player:
-                        # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score += mini_center
-                        if check_if_corner(i, j):
-                            score += mini_corner
-                        if check_if_edge(i, j):
-                            score += mini_edge
-
-                    elif state.board_array[mb][i][j] == otherplayer:
-                        # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score -= mini_center
-                        if check_if_corner(i, j):
-                            score -= mini_corner
-                        if check_if_edge(i, j):
-                            score -= mini_edge
-
-        return score
+        return self.heuristicfcn(self, state)
+        # """Returns the heuristic value of the given state.
+        # This is the evaluation function for the state."""
+        # # Check if the game is over.
+        # game_over, winner = game.terminal_test(state)
+        # score = 0
+        # player = self.sign
+        # if player == X:
+        #     otherplayer = O
+        # else:
+        #     otherplayer = X
+        #
+        # if game_over:
+        #     if winner == player:
+        #         return 10000
+        #     elif winner == otherplayer:
+        #         return -10000
+        #     else:
+        #         return -1000
+        #
+        # # Game is not over.
+        #
+        # # SCORES FOR THE MASTER BOARD
+        # master_center = 500
+        # master_corner = 400
+        # master_edge = 300
+        #
+        # # Find the number of positions on the master board that are filled. Give each of these a high score
+        # for i in range(SIZEMINI):
+        #     for j in range(SIZEMINI):
+        #         # Checking if the current position is filled with the current player's sign.
+        #         if state.master_board[i][j] == player:
+        #             # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+        #             if check_if_center(i, j):
+        #                 score += master_center
+        #             if check_if_corner(i, j):
+        #                 score += master_corner
+        #             if check_if_edge(i, j):
+        #                 score += master_edge
+        #         elif state.master_board[i][j] == otherplayer:
+        #             # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+        #             if check_if_center(i, j):
+        #                 score -= master_center
+        #             if check_if_corner(i, j):
+        #                 score -= master_corner
+        #             if check_if_edge(i, j):
+        #                 score -= master_edge
+        #
+        # # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
+        # mini_center = 5
+        # mini_corner = 4
+        # mini_edge = 3
+        #
+        # possible_mb = []
+        # for i in range(SIZEMINI):
+        #     for j in range(SIZEMINI):
+        #         if state.master_board[i][j] == EMPTY:
+        #             possible_mb.append(3 * i + j)
+        # for mb in possible_mb:
+        #     for i in range(SIZEMINI):
+        #         for j in range(SIZEMINI):
+        #             if state.board_array[mb][i][j] == player:
+        #                 # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+        #                 if check_if_center(i, j):
+        #                     score += mini_center
+        #                 if check_if_corner(i, j):
+        #                     score += mini_corner
+        #                 if check_if_edge(i, j):
+        #                     score += mini_edge
+        #
+        #             elif state.board_array[mb][i][j] == otherplayer:
+        #                 # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+        #                 if check_if_center(i, j):
+        #                     score -= mini_center
+        #                 if check_if_corner(i, j):
+        #                     score -= mini_corner
+        #                 if check_if_edge(i, j):
+        #                     score -= mini_edge
+        #
+        # return score
 
 
 class AlphaBetaPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit):
+    def __init__(self, mysign, depth_limit, heuristic):
         self.depth_limit = depth_limit
         self.sign = mysign
+        self.heuristicfcn = heuristic
 
     def make_move(self, state):
         move = self.alpha_beta_search(state)
@@ -272,91 +277,93 @@ class AlphaBetaPlayer(UtttPlayerTemplate):
         return v, move
 
     def heuristic(self, state):
-        """Returns the heuristic value of the given state.
-        This is the evaluation function for the state."""
-        # Check if the game is over.
-        game_over, winner = game.terminal_test(state)
-        score = 0
-        player = self.sign
-        if player == X:
-            otherplayer = O
-        else:
-            otherplayer = X
-
-        if game_over:
-            if winner == player:
-                return 10000
-            elif winner == otherplayer:
-                return -10000
-            else:
-                return -1000
-
-        # Game is not over.
-
-        # SCORES FOR THE MASTER BOARD
-        master_center = 500
-        master_corner = 400
-        master_edge = 300
-
-        # Find the number of positions on the master board that are filled. Give each of these a high score
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                # Checking if the current position is filled with the current player's sign.
-                if state.master_board[i][j] == player:
-                    # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                    if check_if_center(i, j):
-                        score += master_center
-                    if check_if_corner(i, j):
-                        score += master_corner
-                    if check_if_edge(i, j):
-                        score += master_edge
-                elif state.master_board[i][j] == otherplayer:
-                    # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                    if check_if_center(i, j):
-                        score -= master_center
-                    if check_if_corner(i, j):
-                        score -= master_corner
-                    if check_if_edge(i, j):
-                        score -= master_edge
-
-        # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
-        mini_center = 5
-        mini_corner = 4
-        mini_edge = 3
-
-        possible_mb = []
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                if state.master_board[i][j] == EMPTY:
-                    possible_mb.append(3 * i + j)
-        for mb in possible_mb:
-            for i in range(SIZEMINI):
-                for j in range(SIZEMINI):
-                    if state.board_array[mb][i][j] == player:
-                        # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score += mini_center
-                        if check_if_corner(i, j):
-                            score += mini_corner
-                        if check_if_edge(i, j):
-                            score += mini_edge
-
-                    elif state.board_array[mb][i][j] == otherplayer:
-                        # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score -= mini_center
-                        if check_if_corner(i, j):
-                            score -= mini_corner
-                        if check_if_edge(i, j):
-                            score -= mini_edge
-
-        return score
+        return self.heuristicfcn(self, state)
+        # """Returns the heuristic value of the given state.
+        # This is the evaluation function for the state."""
+        # # Check if the game is over.
+        # game_over, winner = game.terminal_test(state)
+        # score = 0
+        # player = self.sign
+        # if player == X:
+        #     otherplayer = O
+        # else:
+        #     otherplayer = X
+        #
+        # if game_over:
+        #     if winner == player:
+        #         return 10000
+        #     elif winner == otherplayer:
+        #         return -10000
+        #     else:
+        #         return -1000
+        #
+        # # Game is not over.
+        #
+        # # SCORES FOR THE MASTER BOARD
+        # master_center = 500
+        # master_corner = 400
+        # master_edge = 300
+        #
+        # # Find the number of positions on the master board that are filled. Give each of these a high score
+        # for i in range(SIZEMINI):
+        #     for j in range(SIZEMINI):
+        #         # Checking if the current position is filled with the current player's sign.
+        #         if state.master_board[i][j] == player:
+        #             # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+        #             if check_if_center(i, j):
+        #                 score += master_center
+        #             if check_if_corner(i, j):
+        #                 score += master_corner
+        #             if check_if_edge(i, j):
+        #                 score += master_edge
+        #         elif state.master_board[i][j] == otherplayer:
+        #             # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+        #             if check_if_center(i, j):
+        #                 score -= master_center
+        #             if check_if_corner(i, j):
+        #                 score -= master_corner
+        #             if check_if_edge(i, j):
+        #                 score -= master_edge
+        #
+        # # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
+        # mini_center = 5
+        # mini_corner = 4
+        # mini_edge = 3
+        #
+        # possible_mb = []
+        # for i in range(SIZEMINI):
+        #     for j in range(SIZEMINI):
+        #         if state.master_board[i][j] == EMPTY:
+        #             possible_mb.append(3 * i + j)
+        # for mb in possible_mb:
+        #     for i in range(SIZEMINI):
+        #         for j in range(SIZEMINI):
+        #             if state.board_array[mb][i][j] == player:
+        #                 # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+        #                 if check_if_center(i, j):
+        #                     score += mini_center
+        #                 if check_if_corner(i, j):
+        #                     score += mini_corner
+        #                 if check_if_edge(i, j):
+        #                     score += mini_edge
+        #
+        #             elif state.board_array[mb][i][j] == otherplayer:
+        #                 # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+        #                 if check_if_center(i, j):
+        #                     score -= mini_center
+        #                 if check_if_corner(i, j):
+        #                     score -= mini_corner
+        #                 if check_if_edge(i, j):
+        #                     score -= mini_edge
+        #
+        # return score
 
 
 class AlphaBetaPlayerV2(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit):
+    def __init__(self, mysign, depth_limit, heuristic):
         self.depth_limit = depth_limit
         self.sign = mysign
+        self.heuristicfcn = heuristic
 
     def make_move(self, state):
         move = self.alpha_beta_search(state)
@@ -410,112 +417,113 @@ class AlphaBetaPlayerV2(UtttPlayerTemplate):
         return v, move
 
     def heuristic(self, state):
-        """Returns the heuristic value of the given state.
-        This is the evaluation function for the state."""
-        # Check if the game is over.
-        game_over, winner = game.terminal_test(state)
-        score = 0
-        player = self.sign
-        if player == X:
-            otherplayer = O
-        else:
-            otherplayer = X
+        return self.heuristicfcn(self, state)
+        # """Returns the heuristic value of the given state.
+        # This is the evaluation function for the state."""
+        # # Check if the game is over.
+        # game_over, winner = game.terminal_test(state)
+        # score = 0
+        # player = self.sign
+        # if player == X:
+        #     otherplayer = O
+        # else:
+        #     otherplayer = X
+        #
+        # if game_over:
+        #     if winner == player:
+        #         return 10000
+        #     elif winner == otherplayer:
+        #         return -10000
+        #     else:
+        #         return -1000
+        #
+        # # Game is not over.
+        #
+        # # SCORES FOR THE MASTER BOARD
+        # master_center = 15
+        # master_corner = 13
+        # master_edge = 5
+        #
+        # # Find the number of positions on the master board that are filled. Give each of these a high score
+        # for i in range(SIZEMINI):
+        #     for j in range(SIZEMINI):
+        #         # Checking if the current position is filled with the current player's sign.
+        #         if state.master_board[i][j] == player:
+        #             # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+        #             if check_if_center(i, j):
+        #                 score += master_center
+        #             if check_if_corner(i, j):
+        #                 score += master_corner
+        #             if check_if_edge(i, j):
+        #                 score += master_edge
+        #         elif state.master_board[i][j] == otherplayer:
+        #             # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+        #             if check_if_center(i, j):
+        #                 score -= master_center
+        #             if check_if_corner(i, j):
+        #                 score -= master_corner
+        #             if check_if_edge(i, j):
+        #                 score -= master_edge
+        # print("Score for Master Board: ", score)
+        # # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
+        # mini_center = 5
+        # mini_corner = 3
+        # mini_edge = 0
+        #
+        # possible_mb = []
+        # for i in range(SIZEMINI):
+        #     for j in range(SIZEMINI):
+        #         if state.master_board[i][j] == EMPTY:
+        #             possible_mb.append(3 * i + j)
+        #
+        # for mb in possible_mb:
+        #     for i in range(SIZEMINI):
+        #         for j in range(SIZEMINI):
+        #             if state.board_array[mb][i][j] == player:
+        #                 # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+        #                 if check_if_center(i, j):
+        #                     score += mini_center
+        #                 if check_if_corner(i, j):
+        #                     score += mini_corner
+        #                 if check_if_edge(i, j):
+        #                     score += mini_edge
+        #
+        #             elif state.board_array[mb][i][j] == otherplayer:
+        #                 # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+        #                 if check_if_center(i, j):
+        #                     score -= mini_center
+        #                 if check_if_corner(i, j):
+        #                     score -= mini_corner
+        #                 if check_if_edge(i, j):
+        #                     score -= mini_edge
+        # print("Score with Mini Boards: ", score)
+        #
+        # # Make a function which can Check for two in a row on mini boards.
+        # double_accuired = 0
+        # for mb in possible_mb:
+        #     for position in WINNING_POSITIONS:
+        #         count = 0
+        #         for pair in position:
+        #             if state.board_array[mb][pair[0]][pair[1]] == player:
+        #                 count += 1
+        #         if count == 2:
+        #             double_accuired += 1
+        # score += double_accuired * 2
+        # print('Score for 2 in pair accuisition on Mini Board: ', double_accuired * 2)
+        #
+        # # Make a function which can Check for two in a row on Master boards.
+        # double_accuired_master = 0
+        # for position in WINNING_POSITIONS:
+        #     count = 0
+        #     for pair in position:
+        #         if state.master_board[pair[0]][pair[1]] == player:
+        #             count += 1
+        #     if count == 2:
+        #         double_accuired_master += 1
+        # score += double_accuired_master * 4
+        # print('Score for 2 in pair accuisition on Master Board: ', double_accuired_master * 2)
 
-        if game_over:
-            if winner == player:
-                return 10000
-            elif winner == otherplayer:
-                return -10000
-            else:
-                return -1000
-
-        # Game is not over.
-
-        # SCORES FOR THE MASTER BOARD
-        master_center = 15
-        master_corner = 13
-        master_edge = 5
-
-        # Find the number of positions on the master board that are filled. Give each of these a high score
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                # Checking if the current position is filled with the current player's sign.
-                if state.master_board[i][j] == player:
-                    # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                    if check_if_center(i, j):
-                        score += master_center
-                    if check_if_corner(i, j):
-                        score += master_corner
-                    if check_if_edge(i, j):
-                        score += master_edge
-                elif state.master_board[i][j] == otherplayer:
-                    # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                    if check_if_center(i, j):
-                        score -= master_center
-                    if check_if_corner(i, j):
-                        score -= master_corner
-                    if check_if_edge(i, j):
-                        score -= master_edge
-        print("Score for Master Board: ", score)
-        # SCORES ASSIGNED FOR POINTS ON MINI BOARDS
-        mini_center = 5
-        mini_corner = 3
-        mini_edge = 0
-
-        possible_mb = []
-        for i in range(SIZEMINI):
-            for j in range(SIZEMINI):
-                if state.master_board[i][j] == EMPTY:
-                    possible_mb.append(3 * i + j)
-
-        for mb in possible_mb:
-            for i in range(SIZEMINI):
-                for j in range(SIZEMINI):
-                    if state.board_array[mb][i][j] == player:
-                        # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score += mini_center
-                        if check_if_corner(i, j):
-                            score += mini_corner
-                        if check_if_edge(i, j):
-                            score += mini_edge
-
-                    elif state.board_array[mb][i][j] == otherplayer:
-                        # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
-                        if check_if_center(i, j):
-                            score -= mini_center
-                        if check_if_corner(i, j):
-                            score -= mini_corner
-                        if check_if_edge(i, j):
-                            score -= mini_edge
-        print("Score with Mini Boards: ", score)
-
-        # Make a function which can Check for two in a row on mini boards.
-        double_accuired = 0
-        for mb in possible_mb:
-            for position in WINNING_POSITIONS:
-                count = 0
-                for pair in position:
-                    if state.board_array[mb][pair[0]][pair[1]] == player:
-                        count += 1
-                if count == 2:
-                    double_accuired += 1
-        score += double_accuired * 2
-        print('Score for 2 in pair accuisition on Mini Board: ', double_accuired * 2)
-
-        # Make a function which can Check for two in a row on Master boards.
-        double_accuired_master = 0
-        for position in WINNING_POSITIONS:
-            count = 0
-            for pair in position:
-                if state.master_board[pair[0]][pair[1]] == player:
-                    count += 1
-            if count == 2:
-                double_accuired_master += 1
-        score += double_accuired_master * 4
-        print('Score for 2 in pair accuisition on Master Board: ', double_accuired_master * 2)
-
-        return score
+        # return score
 
 
 def check_if_center(i, j):
@@ -549,4 +557,3 @@ def check_if_edge(i, j):
         return True
     else:
         return False
-

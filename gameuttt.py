@@ -4,6 +4,7 @@ from copy import deepcopy
 import players
 import time
 import threading
+import heuristics as heu
 
 # Defining Global Variables.
 EMPTY = '-'
@@ -174,36 +175,36 @@ def result(state, action):
         new_state = UtttState(state.other, state.current, last_move=action, board_array=new_board)
         return new_state
 
-
-def max_value_alpha_beta(state, depth, player, alpha, beta):
-    game_over, winner = terminal_test(state)
-    if game_over or depth == 0:
-        return heuristic(state, player), None
-    val = float('-inf')
-    for a in actions(state):
-        [v2, a2] = min_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
-        if v2 > val:
-            val, move = v2, a
-            alpha = max(alpha, val)
-        if val >= beta:
-            return val, move
-    # print("Move: ", move)
-    return val, move
-
-
-def min_value_alpha_beta(state, depth, player, alpha, beta):
-    game_over, winner = terminal_test(state)
-    if game_over or depth == 0:
-        return heuristic(state, player), None
-    val = float('inf')
-    for a in actions(state):
-        [v2, a2] = max_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
-        if v2 < val:
-            val, move = v2, a
-            beta = min(beta, val)
-        if val <= alpha:
-            return val, move
-    return val, move
+#
+# def max_value_alpha_beta(state, depth, player, alpha, beta):
+#     game_over, winner = terminal_test(state)
+#     if game_over or depth == 0:
+#         return heuristic(state, player), None
+#     val = float('-inf')
+#     for a in actions(state):
+#         [v2, a2] = min_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
+#         if v2 > val:
+#             val, move = v2, a
+#             alpha = max(alpha, val)
+#         if val >= beta:
+#             return val, move
+#     # print("Move: ", move)
+#     return val, move
+#
+#
+# def min_value_alpha_beta(state, depth, player, alpha, beta):
+#     game_over, winner = terminal_test(state)
+#     if game_over or depth == 0:
+#         return heuristic(state, player), None
+#     val = float('inf')
+#     for a in actions(state):
+#         [v2, a2] = max_value_alpha_beta(result(state, a), depth - 1, player, alpha, beta)
+#         if v2 < val:
+#             val, move = v2, a
+#             beta = min(beta, val)
+#         if val <= alpha:
+#             return val, move
+#     return val, move
 
 
 def search_test(player1, player2, num_iterations=1):
@@ -247,7 +248,7 @@ def play_game(p1=None, p2=None):
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
-            print(s)
+            # print(s)
             return winner
         action = p2.make_move(s)
         if action not in actions(s):
@@ -261,7 +262,7 @@ def play_game(p1=None, p2=None):
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
-            print(s)
+            # print(s)
             return winner
     # print('Debug here.')
     # # print(s)
@@ -270,7 +271,7 @@ def play_game(p1=None, p2=None):
 
 def main():
     p1 = players.RandomPlayer(O)
-    p2 = players.AlphaBetaPlayer(X, 7)
+    p2 = players.AlphaBetaPlayer(X, 2, heu.homemade)
     # st = UtttState(p1,p2)
 
     # p2.heuristic(st)
