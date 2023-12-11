@@ -20,8 +20,9 @@ WINNING_POSITIONS = [((0, 0), (0, 1), (0, 2)),
                      ((0, 2), (1, 2), (2, 2)),
                      ((0, 0), (1, 1), (2, 2)),
                      ((0, 2), (1, 1), (2, 0))]
+MAXSCORE = 10000
 
-global_vars = [EMPTY, X, O, T, SIZE, SIZEMINI, WINNING_POSITIONS]
+global_vars = [EMPTY, X, O, T, SIZE, SIZEMINI, WINNING_POSITIONS, MAXSCORE]
 
 import players
 
@@ -29,7 +30,7 @@ class UtttState:
     '''A class to represent a state in Uttt game.'''
 
     ### Board is created such that to access a element at the center of middle board. WE say [4][1][1]
-    def __init__(self, currentplayer, otherplayer, last_move=None, board_array=None):
+    def __init__(self, currentplayer, otherplayer, last_move=None, board_array=None, num_moves=0):
         if board_array != None:
             self.board_array = board_array
         else:
@@ -38,6 +39,7 @@ class UtttState:
         self.other = otherplayer
         self.last_move = last_move
         self.master_board = build_master(self.board_array)
+        self.num_moves = num_moves
         # self.heuristic = heuristic(self, currentplayer.sign)
 
     def __repr__(self) -> str:
@@ -173,7 +175,7 @@ def result(state, action):
         # Make the new Board array.
         new_board = deepcopy(state.board_array)
         new_board[mb][i][j] = state.current.sign
-        new_state = UtttState(state.other, state.current, last_move=action, board_array=new_board)
+        new_state = UtttState(state.other, state.current, last_move=action, board_array=new_board, num_moves=state.num_moves + 1)
         return new_state
 
 #
@@ -278,7 +280,7 @@ def main():
 
     # p1 = players.RandomPlayer(O)
     # p2 = players.HumanPlayer(X)
-    p1 = players.AlphaBetaPlayer(O, 5, heu.homemade)
+    p1 = players.AlphaBetaPlayer(O, 5, heu.homemadeV2)
     p2 = players.AlphaBetaPlayer(X, 5, heu.pulkit_github)
 
 

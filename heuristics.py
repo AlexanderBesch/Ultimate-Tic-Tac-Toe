@@ -10,9 +10,15 @@ T = game.global_vars[3]
 SIZE = game.global_vars[4]
 SIZEMINI = game.global_vars[5]
 WINNING_POSITIONS = game.global_vars[6]
+MAXSCORE = 100000 # game.global_vars[7]
 
 
 def homemade(player, state):
+    # Should redo this to combine pulkits method with this one -
+    # each smaller board should be examined and then the larger master board should be
+    # examined with a higher weight
+
+
     """Returns the heuristic value of the given state.
     This is the evaluation function for the state."""
     # Check if the game is over.
@@ -29,9 +35,9 @@ def homemade(player, state):
 
     if game_over:
         if winner == player:
-            return 10000
+            return MAXSCORE
         elif winner == otherplayer:
-            return -10000
+            return -MAXSCORE
         else:
             return -1000
 
@@ -108,9 +114,9 @@ def pulkit_github(player, state):
 
     if game_over:
         if winner == player:
-            return 10000
+            return MAXSCORE
         elif winner == otherplayer:
-            return -10000
+            return -MAXSCORE
         else:
             return -1000
 
@@ -153,11 +159,83 @@ def pulkit_github(player, state):
             elif current == one_opponent:
                 score -= 1
 
-
-
     return score
 
+def homemadeV2(player, state):
+    game_over, winner = game.terminal_test(state)
+    score = 0
+    player = player.sign
+    if player == X:
+        otherplayer = O
+    else:
+        otherplayer = X
 
+    if game_over:
+        if winner == player:
+            return MAXSCORE
+        elif winner == otherplayer:
+            return -MAXSCORE
+        else:
+            return -1000
+
+    # Game is not over
+    # The way this heuristic works is that it looks at every way to win and assigns a score to each mini game as to how close the user is to winning
+    # If the current player has 1 in a row and the rest is empty, then the score is 1
+    # If the current player has 2 in a row and the rest is empty, then the score is 10
+    # If the current player has 3 in a row, then the score is 100
+    # If the other player has 1 in a row and the rest is empty, then the score is -1
+    # If the other player has 2 in a row and the rest is empty, then the score is -10
+    # If the other player has 3 in a row, then the score is -100
+
+    # Initializing counter
+    three = Counter(player * 3)
+    two = Counter(player * 2 + EMPTY)
+    one = Counter(player * 1 + EMPTY * 2)
+    three_opponent = Counter(otherplayer * 3)
+    two_opponent = Counter(otherplayer * 2 + EMPTY)
+    one_opponent = Counter(otherplayer * 1 + EMPTY * 2)
+
+    for i in range(SIZE):
+        for idxs in WINNING_POSITIONS:
+            # print(idxs)
+            # print(idxs[0][0])
+            [x1, x2] = idxs[0]
+            [y1, y2] = idxs[1]
+            [z1, z2] = idxs[2]
+            # (x, y, z) = idxs
+            current = Counter([state.board_array[i][x1][x2], state.board_array[i][y1][y2], state.board_array[i][z1][z2]])
+            if current == three:
+                score += 100
+            elif current == two:
+                score += 10
+            elif current == one:
+                score += 1
+            elif current == three_opponent:
+                score -= 100
+            elif current == two_opponent:
+                score -= 10
+            elif current == one_opponent:
+                score -= 1
+
+    for idxs in WINNING_POSITIONS:
+        [x1, x2] = idxs[0]
+        [y1, y2] = idxs[1]
+        [z1, z2] = idxs[2]
+        current = Counter([state.master_board[x1][x2], state.master_board[y1][y2], state.master_board[z1][z2]])
+        if current == three:
+            score += MAXSCORE
+        elif current == two:
+            score += 1000
+        elif current == one:
+            score += 100
+        elif current == three_opponent:
+            score -= MAXSCORE
+        elif current == two_opponent:
+            score -= 1000
+        elif current == one_opponent:
+            score -= 100
+
+    return score
 
 def check_if_center(i, j):
     if i == 1 and j == 1:

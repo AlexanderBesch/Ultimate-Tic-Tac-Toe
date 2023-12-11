@@ -18,7 +18,7 @@ T = game.global_vars[3]
 SIZE = game.global_vars[4]
 SIZEMINI = game.global_vars[5]
 WINNING_POSITIONS = game.global_vars[6]
-
+MAXSCORE = game.global_vars[7]
 
 class UtttPlayerTemplate:
     """Template class for UTTT player classes. This is inherited by all classes."""
@@ -92,7 +92,13 @@ class MinimaxPlayer(UtttPlayerTemplate):
         self.heuristicfcn = heuristic
 
     def make_move(self, state):
-        move = self.minimax_search(state)
+        if state.num_moves < 2:
+            legal_actions = game.actions(state)
+            # print("Legal Actions:",legal_actions)
+            move = choice(legal_actions)
+            if game.print_player_moves: print("Took Random Move: ", state.num_moves)
+        else:
+            move = self.minimax_search(state)
         if game.print_player_moves: print(f"Minimax Player made move: {move}")
         return move
 
@@ -149,7 +155,13 @@ class AlphaBetaPlayer(UtttPlayerTemplate):
         self.heuristicfcn = heuristic
 
     def make_move(self, state):
-        move = self.alpha_beta_search(state)
+        if state.num_moves < 2:
+            legal_actions = game.actions(state)
+            # print("Legal Actions:",legal_actions)
+            move = choice(legal_actions)
+            if game.print_player_moves: print("Took Random Move: ", state.num_moves)
+        else:
+            move = self.alpha_beta_search(state)
         if game.print_player_moves: print(f"AlphaBeta Player made move: {move}")
         return move
 
@@ -211,8 +223,14 @@ class AlphaBetaPlayerV2(UtttPlayerTemplate):
         self.heuristicfcn = heuristic
 
     def make_move(self, state):
-        move = self.alpha_beta_search(state)
-        print(f"AlphaBetaV2 Player made move: {move}")
+        if state.num_moves < 2:
+            legal_actions = game.actions(state)
+            # print("Legal Actions:",legal_actions)
+            move = choice(legal_actions)
+            if game.print_player_moves: print("Took Random Move: ", state.num_moves)
+        else:
+            move = self.alpha_beta_search(state)
+        if game.print_player_moves: print(f"AlphaBetaV2 Player made move: {move}")
         return move
 
     def alpha_beta_search(self, state):
