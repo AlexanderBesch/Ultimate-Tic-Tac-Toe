@@ -4,6 +4,7 @@ from copy import deepcopy
 import time
 import threading
 import heuristics as heu
+import matplotlib as plt
 
 # Defining Global Variables.
 EMPTY = '-'
@@ -21,6 +22,7 @@ WINNING_POSITIONS = [((0, 0), (0, 1), (0, 2)),
                      ((0, 0), (1, 1), (2, 2)),
                      ((0, 2), (1, 1), (2, 0))]
 MAXSCORE = 10000
+print_player_moves = False
 
 global_vars = [EMPTY, X, O, T, SIZE, SIZEMINI, WINNING_POSITIONS, MAXSCORE]
 
@@ -210,12 +212,12 @@ def result(state, action):
 #     return val, move
 
 
-def search_test(player1, player2, num_iterations=1):
+def search_test(player1, player2, num_iterations=1, printouts=True):
     score = [0, 0, 0]  # [player1, player2, tie]
     ts = time.time()
     for i in range(num_iterations):
         print("Iteration: ", i + 1, "/", num_iterations, "  Score: ", score, "[P1, P2, Tie]")
-        winner = play_game(player1, player2)
+        winner = play_game(player1, player2, printouts)
         if winner == player1.get_sign():
             score[0] += 1
         elif winner == player2.get_sign():
@@ -230,7 +232,7 @@ def search_test(player1, player2, num_iterations=1):
     return score
 
 
-def play_game(p1=None, p2=None):
+def play_game(p1=None, p2=None, printouts=True):
     """Play the game with two players. Default use two humans."""
     if p1 == None:
         p1 = players.HumanPlayer(X)
@@ -246,12 +248,12 @@ def play_game(p1=None, p2=None):
             # print("O wins!")
             return None
         s = result(s, action)
-        print(s)
+        if printouts: print(s)
         game_over, winner = terminal_test(s)
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
-            # print(s)
+            if not printouts: print(s)
             return winner
         action = p2.make_move(s)
         if action not in actions(s):
@@ -260,16 +262,35 @@ def play_game(p1=None, p2=None):
             return None
         # print(s)
         s = result(s, action)
-        print(s)
+        if printouts: print(s)
         game_over, winner = terminal_test(s)
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
-            # print(s)
+            if not printouts: print(s)
             return winner
     # print('Debug here.')
     # # print(s)
     # p1.heuristic(s)
+
+def plot():
+    # creating the dataset
+    data = {'C': 20, 'C++': 15, 'Java': 30,
+            'Python': 35}
+    courses = list(data.keys())
+    values = list(data.values())
+
+    fig = plt.figure(figsize=(10, 5))
+
+    # creating the bar plot
+    plt.bar(courses, values, color='maroon',
+            width=0.4)
+
+    plt.xlabel("Courses offered")
+    plt.ylabel("No. of students enrolled")
+    plt.title("Students enrolled in different courses")
+    plt.show()
+
 
 
 def main():
@@ -282,23 +303,20 @@ def main():
     # p2 = players.HumanPlayer(X)
     p1 = players.AlphaBetaPlayer(O, 5, heu.homemadeV2)
     p2 = players.AlphaBetaPlayer(X, 5, heu.pulkit_github)
-
+    # play_game(p1, p2)
 
     # st = UtttState(p1,p2)
 
     # p2.heuristic(st)
 
-    play_game(p1, p2)
+
 
     iters = 20
-    # Running multiple iterations of the alpha-beta search
-    # score = search_test(p1, p2, iters)
-    # print(score)
-    # p1 = players.MinimaxPlayer(2, X)
-    # p2 = players.RandomPlayer(O)
-    # print("Running minimax search test")
-    # score = search_test(p1, p2, TESTING_ITERATIONS)
-    # t_stop = time.time()
+    print("Running homemadeV2 vs PulkitGithub test")
+    ts = time.time()
+    score = search_test(p1, p2, iters, printouts=False)
+    t_stop = time.time()
+    print("Score: [homemadev2wins, pulkitwins, ties", score)
     # print("Total time: ", t_stop - ts, "s")
 
     # TRIED TO IMPLEMENT THREADING OF THE TWO PROCESSES. IT WAS NOT FASTER.
@@ -319,7 +337,10 @@ def main():
     # print("Total time: ", t_stop - ts, "s")
 
 
-print_player_moves = False
+# print_player_moves = False
 
 if __name__ == '__main__':
     main()
+
+
+
