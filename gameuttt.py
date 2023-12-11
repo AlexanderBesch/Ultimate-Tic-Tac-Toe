@@ -1,7 +1,6 @@
 # Importing libraries
 import copy
 from copy import deepcopy
-import players
 import time
 import threading
 import heuristics as heu
@@ -23,6 +22,8 @@ WINNING_POSITIONS = [((0, 0), (0, 1), (0, 2)),
                      ((0, 2), (1, 1), (2, 0))]
 
 global_vars = [EMPTY, X, O, T, SIZE, SIZEMINI, WINNING_POSITIONS]
+
+import players
 
 class UtttState:
     '''A class to represent a state in Uttt game.'''
@@ -270,8 +271,17 @@ def play_game(p1=None, p2=None):
 
 
 def main():
-    p1 = players.RandomPlayer(O)
-    p2 = players.AlphaBetaPlayer(X, 2, heu.homemade)
+    # HEURISTIC OPTIONS
+    # Name - Max_tested_working_depth - designer
+    # heu.homemade - Designed and made by Mohit/Alex
+    # heu.pulkit_github - Designed and made by Pulkit (From uttt github python repo)
+
+    # p1 = players.RandomPlayer(O)
+    # p2 = players.HumanPlayer(X)
+    p1 = players.AlphaBetaPlayer(O, 5, heu.homemade)
+    p2 = players.AlphaBetaPlayer(X, 5, heu.pulkit_github)
+
+
     # st = UtttState(p1,p2)
 
     # p2.heuristic(st)

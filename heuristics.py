@@ -1,12 +1,15 @@
 import gameuttt as game
+from collections import Counter
 # from players import check_if_center, check_if_corner, check_if_edge
 
-X = "X"
-O = "O"
-EMPTY = "-"
-TIE = "T"
-SIZE = 9
-SIZEMINI = 3
+# Defining Global Variables defined in gameuttt.py
+EMPTY = game.global_vars[0]
+X = game.global_vars[1]
+O = game.global_vars[2]
+T = game.global_vars[3]
+SIZE = game.global_vars[4]
+SIZEMINI = game.global_vars[5]
+WINNING_POSITIONS = game.global_vars[6]
 
 
 def homemade(player, state):
@@ -92,6 +95,68 @@ def homemade(player, state):
                         score -= mini_edge
 
     return score
+
+
+def pulkit_github(player, state):
+    game_over, winner = game.terminal_test(state)
+    score = 0
+    player = player.sign
+    if player == X:
+        otherplayer = O
+    else:
+        otherplayer = X
+
+    if game_over:
+        if winner == player:
+            return 10000
+        elif winner == otherplayer:
+            return -10000
+        else:
+            return -1000
+
+    # Game is not over
+    # The way this heuristic works is that it looks at every way to win and assigns a score to each mini game as to how close the user is to winning
+    # If the current player has 1 in a row and the rest is empty, then the score is 1
+    # If the current player has 2 in a row and the rest is empty, then the score is 10
+    # If the current player has 3 in a row, then the score is 100
+    # If the other player has 1 in a row and the rest is empty, then the score is -1
+    # If the other player has 2 in a row and the rest is empty, then the score is -10
+    # If the other player has 3 in a row, then the score is -100
+
+    # Initializing counter
+    three = Counter(player * 3)
+    two = Counter(player * 2 + EMPTY)
+    one = Counter(player * 1 + EMPTY * 2)
+    three_opponent = Counter(otherplayer * 3)
+    two_opponent = Counter(otherplayer * 2 + EMPTY)
+    one_opponent = Counter(otherplayer * 1 + EMPTY * 2)
+
+    for i in range(SIZE):
+        for idxs in WINNING_POSITIONS:
+            # print(idxs)
+            # print(idxs[0][0])
+            [x1, x2] = idxs[0]
+            [y1, y2] = idxs[1]
+            [z1, z2] = idxs[2]
+            # (x, y, z) = idxs
+            current = Counter([state.board_array[i][x1][x2], state.board_array[i][y1][y2], state.board_array[i][z1][z2]])
+            if current == three:
+                score += 100
+            elif current == two:
+                score += 10
+            elif current == one:
+                score += 1
+            elif current == three_opponent:
+                score -= 100
+            elif current == two_opponent:
+                score -= 10
+            elif current == one_opponent:
+                score -= 1
+
+
+
+    return score
+
 
 
 def check_if_center(i, j):

@@ -123,7 +123,9 @@ def opponent(p):
 
 def evaluate_small_box(box_str, player):
     global possible_goals
+    # print(possible_goals)
     score = 0
+    # print(player)
     three = Counter(player * 3)
     two = Counter(player * 2 + ".")
     one = Counter(player * 1 + "." * 2)
@@ -247,6 +249,7 @@ def game(state="." * 81, depth=20):
     possible_goals = [(0, 4, 8), (2, 4, 6)]
     possible_goals += [(i, i+3, i+6) for i in range(3)]
     possible_goals += [(3*i, 3*i+1, 3*i+2) for i in range(3)]
+    print(possible_goals)
     box_won = update_box_won(state)
     print_board(state)
     bot_move = -1

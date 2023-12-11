@@ -59,6 +59,7 @@ class HumanPlayer(UtttPlayerTemplate):
             else:
                 print("O", end='')
             print(' to play.')
+            # print("[DEBUGGING] Current Player: ", self.sign, "Current Heuristic Value: ", heu.pulkit_github(self, state))
             print(f'Legal Moves are : {legal_moves}')
             input_move = input(
                 'Enter your move as mb,r,c pair. mb is the board number, r, c are row and column index inside the mb where you want to make the move:\n')
