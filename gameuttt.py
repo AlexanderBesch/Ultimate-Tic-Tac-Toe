@@ -267,8 +267,8 @@ def play_game(p1 = None, p2 = None):
         p2 = players.HumanPlayer(O)
 
     s = UtttState(p1, p2)
-    # while True:
-    for i in range(20):
+    while True:
+    # for i in range(20):
         action = p1.make_move(s)
         if action not in actions(s):
             # print("Illegal move made by X")
@@ -294,21 +294,21 @@ def play_game(p1 = None, p2 = None):
             print("Game Over")
             print("Player " + winner + " wins!")
             return winner
-    print('Debug here.')
-    print(s)
-    p1.heuristic(s)
+    # # print('Debug here.')
+    # print(s)
+    # p1.heuristic(s)
 
 
 def main():
-    p1 = players.AlphaBetaPlayerV2(O,4)
-    p2 = players.AlphaBetaPlayer(X,4)
+    p1 = players.MinimaxPlayer(O,4)
+    p2 = players.AlphaBetaPlayer(X,6)
     # st = UtttState(p1,p2)
 
     # p2.heuristic(st)
 
     play_game(p1,p2)
 
-    iters = 20
+    # iters = 20
     # Running multiple iterations of the alpha-beta search
     # score = search_test(p1, p2, iters)
     # print(score)
