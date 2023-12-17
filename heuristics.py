@@ -14,17 +14,9 @@ MAXSCORE = 100000 # game.global_vars[7]
 
 
 def homemade(player, state):
-    # Should redo this to combine pulkits method with this one -
-    # each smaller board should be examined and then the larger master board should be
-    # examined with a higher weight
-
-
-    """Returns the heuristic value of the given state.
+    """Returns the heuristic value of the given state using a homemade scoring method.
     This is the evaluation function for the state."""
     # Check if the game is over.
-    # print("master board: " + str(state.master_board))
-    # print(game.terminal_test(state.master_board))
-
     game_over, winner = game.terminal_test(state)
     score = 0
     player = player.sign
@@ -53,7 +45,7 @@ def homemade(player, state):
         for j in range(SIZEMINI):
             # Checking if the current position is filled with the current player's sign.
             if state.master_board[i][j] == player:
-                # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+                # Current position is filled with the current player's sign. Checking where in the 3x3 board the position is.
                 if check_if_center(i, j):
                     score += master_center
                 if check_if_corner(i, j):
@@ -61,7 +53,7 @@ def homemade(player, state):
                 if check_if_edge(i, j):
                     score += master_edge
             elif state.master_board[i][j] == otherplayer:
-                # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+                # Current position is filled with the other player's sign. Checking where in the 3x3 board the position is.
                 if check_if_center(i, j):
                     score -= master_center
                 if check_if_corner(i, j):
@@ -83,16 +75,15 @@ def homemade(player, state):
         for i in range(SIZEMINI):
             for j in range(SIZEMINI):
                 if state.board_array[mb][i][j] == player:
-                    # Current position is filled with the current players sign. Checking where in the 3x3 board the position is.
+                    # Current position is filled with the current player's sign. Checking where in the 3x3 board the position is.
                     if check_if_center(i, j):
                         score += mini_center
                     if check_if_corner(i, j):
                         score += mini_corner
                     if check_if_edge(i, j):
                         score += mini_edge
-
                 elif state.board_array[mb][i][j] == otherplayer:
-                    # Current position is filled with the other players sign. Checking where in the 3x3 board the position is.
+                    # Current position is filled with the other player's sign. Checking where in the 3x3 board the position is.
                     if check_if_center(i, j):
                         score -= mini_center
                     if check_if_corner(i, j):
@@ -104,6 +95,8 @@ def homemade(player, state):
 
 
 def pulkit_github(player, state):
+    """Returns the heuristic value of the given state using Pulkit's scoring method.
+    This is the evaluation function for the state."""
     game_over, winner = game.terminal_test(state)
     score = 0
     player = player.sign
@@ -121,7 +114,7 @@ def pulkit_github(player, state):
             return -1000
 
     # Game is not over
-    # The way this heuristic works is that it looks at every way to win and assigns a score to each mini game as to how close the user is to winning
+    # The way this heuristic works is that it looks at every way to win and assigns a score to each mini-game as to how close the player is to winning
     # If the current player has 1 in a row and the rest is empty, then the score is 1
     # If the current player has 2 in a row and the rest is empty, then the score is 10
     # If the current player has 3 in a row, then the score is 100
@@ -139,12 +132,9 @@ def pulkit_github(player, state):
 
     for i in range(SIZE):
         for idxs in WINNING_POSITIONS:
-            # print(idxs)
-            # print(idxs[0][0])
             [x1, x2] = idxs[0]
             [y1, y2] = idxs[1]
             [z1, z2] = idxs[2]
-            # (x, y, z) = idxs
             current = Counter([state.board_array[i][x1][x2], state.board_array[i][y1][y2], state.board_array[i][z1][z2]])
             if current == three:
                 score += 100
@@ -162,6 +152,8 @@ def pulkit_github(player, state):
     return score
 
 def homemadeV2(player, state):
+    """Returns the heuristic value of the given state using an extended version of the homemade scoring method.
+    This is the evaluation function for the state."""
     game_over, winner = game.terminal_test(state)
     score = 0
     player = player.sign
@@ -179,7 +171,7 @@ def homemadeV2(player, state):
             return -1000
 
     # Game is not over
-    # The way this heuristic works is that it looks at every way to win and assigns a score to each mini game as to how close the user is to winning
+    # The way this heuristic works is that it looks at every way to win and assigns a score to each mini-game as to how close the player is to winning
     # If the current player has 1 in a row and the rest is empty, then the score is 1
     # If the current player has 2 in a row and the rest is empty, then the score is 10
     # If the current player has 3 in a row, then the score is 100
@@ -197,12 +189,9 @@ def homemadeV2(player, state):
 
     for i in range(SIZE):
         for idxs in WINNING_POSITIONS:
-            # print(idxs)
-            # print(idxs[0][0])
             [x1, x2] = idxs[0]
             [y1, y2] = idxs[1]
             [z1, z2] = idxs[2]
-            # (x, y, z) = idxs
             current = Counter([state.board_array[i][x1][x2], state.board_array[i][y1][y2], state.board_array[i][z1][z2]])
             if current == three:
                 score += 100
@@ -237,7 +226,9 @@ def homemadeV2(player, state):
 
     return score
 
+
 def check_if_center(i, j):
+    """Checks if the given position is at the center of a 3x3 board."""
     if i == 1 and j == 1:
         return True
     else:
@@ -245,6 +236,7 @@ def check_if_center(i, j):
 
 
 def check_if_corner(i, j):
+    """Checks if the given position is at a corner of a 3x3 board."""
     if i == 0 and j == 0:
         return True
     elif i == 0 and j == 2:
@@ -258,6 +250,7 @@ def check_if_corner(i, j):
 
 
 def check_if_edge(i, j):
+    """Checks if the given position is at an edge of a 3x3 board."""
     if i == 0 and j == 1:
         return True
     elif i == 1 and j == 0:
