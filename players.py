@@ -85,7 +85,7 @@ class HumanPlayer(UtttPlayerTemplate):
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit, heuristic):
+    def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
         self.heuristicfcn = heuristic
@@ -147,7 +147,7 @@ class MinimaxPlayer(UtttPlayerTemplate):
 
 
 class AlphaBetaPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit, heuristic):
+    def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
         self.heuristicfcn = heuristic
