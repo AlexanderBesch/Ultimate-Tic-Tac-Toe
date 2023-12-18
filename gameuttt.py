@@ -248,24 +248,25 @@ def main():
     # PLAYER OPTIONS
     # Name - designer
     # players.HumanPlayer - Designed and made by Mohit/Alex
-    # players.AlphaBetaPlayer - Designed and made by Mohit/Alex
+    # players.AlphaBetaPlayer(PlayerSymbol (char), depth_limit (int), heuristic) - Designed and made by Mohit/Alex
+    # players.MinimaxPlayer(PlayerSymbol (char), depth_limit (int), heuristic) - Designed and made by Mohit/Alex
     # players.RandomPlayer - Designed and made by Mohit/Alex
 
-    # p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
-    # p2 = players.HumanPlayer(X)
-    # play_game(p1, p2)
+    p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
+    p2 = players.HumanPlayer(X)
+    play_game(p1, p2)
 
 
     # CODE USED IN THE FINAL TESTING OF THE ALGORITHMS AND HEURISTICS
-    p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
-    p2 = players.AlphaBetaPlayer(X, 6, heu.pulkit_github)
-    iters = 1
-    print("Running homemadeV2 vs PulkitGithub test")
-    ts = time.time()
-    score = search_test(p1, p2, iters, printouts=False)
-    t_stop = time.time()
-    print("Score: [random_wins, homemade_wins, ties", score)
-    # print("Total time: ", t_stop - ts, "s")
+    # p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
+    # p2 = players.AlphaBetaPlayer(X, 6, heu.pulkit_github)
+    # iters = 1
+    # print("Running homemadeV2 vs PulkitGithub test")
+    # ts = time.time()
+    # score = search_test(p1, p2, iters, printouts=False)
+    # t_stop = time.time()
+    # print("Score: [random_wins, homemade_wins, ties", score)
+    # # print("Total time: ", t_stop - ts, "s")
 
 
 
