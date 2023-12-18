@@ -13,7 +13,7 @@ WINNING_POSITIONS = game.global_vars[6]
 MAXSCORE = 100000 # game.global_vars[7]
 
 
-def hauristic1(player, state):
+def heuristic1(player, state):
     """Returns the heuristic value of the given state using a homemade scoring method.
     This is the evaluation function for the state."""
     # Check if the game is over.
@@ -150,6 +150,7 @@ def pulkit_github(player, state):
                 score -= 1
 
     return score
+
 
 def heuristic2(player, state):
     """Returns the heuristic value of the given state using an extended version of the homemade scoring method.

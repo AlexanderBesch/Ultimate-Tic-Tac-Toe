@@ -38,7 +38,6 @@ import players  # Importing a module named 'players'
 
 class UtttState:
     '''A class to represent a state in Ultimate Tic-Tac-Toe game.'''
-
     # Constructor method to initialize the state
     def __init__(self, currentplayer, otherplayer, last_move=None, board_array=None, num_moves=0):
         if board_array != None:
@@ -80,14 +79,11 @@ class UtttState:
         return new_string
 
 
-class UtttGame:
-    """A class to encapsulate the variable and methods for the Ultimate Tic-Tac-Toe game."""
-    pass  # Placeholder class with no attributes or methods
-
 def terminal_test(state):
     # INPUT: 3X3 GAME BOARD
     # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
     return terminal_test_mini(state.master_board)
+
 
 def terminal_test_mini(mini_board):
     """Terminal test for Mini Boards. Input is the 3*3 array and outputs whether the game has ended and the character who won or 'T' if tied."""
@@ -105,6 +101,7 @@ def terminal_test_mini(mini_board):
                 return False, None
     ## We reached here means the board is not won yet, and it is a Tie.
     return True, T
+
 
 def build_master(game):
     """This is a time-consuming function should be used with caution."""
@@ -161,7 +158,6 @@ def actions(state):
     return legal_actions
 
 
-
 def result(state, action):
     """Returns the resulting state after taking the given action.
     Returns None if the action is not legal."""
@@ -210,11 +206,10 @@ def play_game(p1=None, p2=None, printouts=True):
 
     s = UtttState(p1, p2)
     while True:
-    # for i in range(20):
         action = p1.make_move(s)
         if action not in actions(s):
-            # print("Illegal move made by X")
-            # print("O wins!")
+            print("Illegal move made by X")
+            print("O wins!")
             return None
         s = result(s, action)
         if printouts: print(s)
@@ -226,10 +221,9 @@ def play_game(p1=None, p2=None, printouts=True):
             return winner
         action = p2.make_move(s)
         if action not in actions(s):
-            # print("Illegal move made by O")
-            # print("O wins!")
+            print("Illegal move made by O")
+            print("X wins!")
             return None
-        # print(s)
         s = result(s, action)
         if printouts: print(s)
         game_over, winner = terminal_test(s)
@@ -238,10 +232,6 @@ def play_game(p1=None, p2=None, printouts=True):
             print("Player " + winner + " wins!")
             if not printouts: print(s)
             return winner
-    # print('Debug here.')
-    # # print(s)
-    # p1.heuristic(s)
-
 
 
 def main():
@@ -265,13 +255,12 @@ def main():
     # IN THE PLAY_GAME() FUNCTION, THE BOOL VARIABLE 'PRINTOUTS' CAN BE MARKED TRUE OR FALSE
     # THIS CORRESPONDS TO WHETHER OR NOT EACH GAME WILL BE PRINTED AFTER EACH MOVE. ITS DEFAULT IS TRUE
     # NOTE: IN  PRINTING THE MASTER BOARD, THE SYMBOL 'T' CORRESPONDS TO A SUB-BOARD THAT ENDED IN A TIE
-    # When calling AlphaBetaPlayer() or MinimaxPlayer(), only the player_symbol char needs to be passed
-    # The depth limit and heuristic will be defaulted to 4 and players.heu.heuristic2 respectively
+    # HumanPlayer and RandomPlyer take one positional argument i.e., player_symbol which is char (p1 : X, p2 : O).
+    # AlphaBetaPlayer() and MinimaxPlayer() also take two named arguments i.e., depth_limit(defaults to 4) and heuristic(defauts to huiristic2).
 
-    p1 = players.AlphaBetaPlayer(O, 6, players.heu.heuristic2)
-    p2 = players.RandomPlayer(X)
+    p1 = players.AlphaBetaPlayer(X, depth_limit=6, heuristic=players.heu.heuristic2)
+    p2 = players.HumanPlayer(O)
     play_game(p1, p2, printouts=True)
-
 
 
     # CODE USED IN THE FINAL TESTING OF THE ALGORITHMS AND HEURISTICS

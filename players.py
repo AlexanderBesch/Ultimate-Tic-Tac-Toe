@@ -51,7 +51,7 @@ class HumanPlayer(UtttPlayerTemplate):
     def make_move(self, state):
         curr_move = None
         legal_moves = game.actions(state)
-        print(state)
+        # print(state)
         while curr_move == None:
             if self.sign == 'X':
                 print("X", end='')
@@ -85,7 +85,7 @@ class HumanPlayer(UtttPlayerTemplate):
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
+    def __init__(self, mysign, depth_limit = 4, heuristic = heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
         self.heuristicfcn = heuristic
@@ -146,7 +146,6 @@ class MinimaxPlayer(UtttPlayerTemplate):
         return self.heuristicfcn(self, state)
 
 
-
 class AlphaBetaPlayer(UtttPlayerTemplate):
     def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
         self.depth_limit = depth_limit
@@ -163,74 +162,6 @@ class AlphaBetaPlayer(UtttPlayerTemplate):
             move = self.alpha_beta_search(state)
         # move = self.alpha_beta_search(state)
         if game.print_player_moves: print(f"AlphaBeta Player made move: {move}")
-        return move
-
-    def alpha_beta_search(self, state):
-        # Returns a action that the person has to do.
-        current_depth = 0
-        value, move = self.max_value(state, float('-inf'), float('inf'), current_depth)
-        return move
-
-    def max_value(self, state, alpha, beta, current_depth):
-        # Returns (utility, move)
-        if game.terminal_test(state)[0]:
-            return self.heuristic(state), None
-        if self.depth_limit == current_depth:
-            return self.heuristic(state), None
-
-        current_depth += 1
-        v = float('-inf')
-
-        for action in game.actions(state):
-            result_state = game.result(state, action)
-            v2, a2 = self.min_value(result_state, alpha, beta, current_depth)
-            if v2 > v:
-                v, move = v2, action
-                alpha = max(alpha, v)
-            if v >= beta:
-                return v, move
-        return v, move
-
-    def min_value(self, state, alpha, beta, current_depth):
-        # Returns (utility, move)
-        if game.terminal_test(state)[0]:
-            return self.heuristic(state), None
-        if self.depth_limit == current_depth:
-            return self.heuristic(state), None
-
-        current_depth += 1
-        v = float('+inf')
-
-        for action in game.actions(state):
-            result_state = game.result(state, action)
-            v2, a2 = self.max_value(result_state, alpha, beta, current_depth)
-            if v2 < v:
-                v, move = v2, action
-                beta = min(beta, v)
-            if v <= alpha:
-                return v, move
-        return v, move
-
-    def heuristic(self, state):
-        return self.heuristicfcn(self, state)
-
-
-
-class AlphaBetaPlayerV2(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit, heuristic):
-        self.depth_limit = depth_limit
-        self.sign = mysign
-        self.heuristicfcn = heuristic
-
-    def make_move(self, state):
-        if state.num_moves < 2:
-            legal_actions = game.actions(state)
-            # print("Legal Actions:",legal_actions)
-            move = choice(legal_actions)
-            if game.print_player_moves: print("Took Random Move: ", state.num_moves)
-        else:
-            move = self.alpha_beta_search(state)
-        if game.print_player_moves: print(f"AlphaBetaV2 Player made move: {move}")
         return move
 
     def alpha_beta_search(self, state):
