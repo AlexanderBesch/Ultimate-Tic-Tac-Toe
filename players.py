@@ -52,7 +52,6 @@ class HumanPlayer(UtttPlayerTemplate):
         curr_move = None
         legal_moves = game.actions(state)
         # print(state)
-        # print(state)
         while curr_move == None:
             if self.sign == 'X':
                 print("X", end='')
@@ -86,6 +85,7 @@ class HumanPlayer(UtttPlayerTemplate):
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
+    def __init__(self, mysign, depth_limit = 4, heuristic = heu.heuristic2):
     def __init__(self, mysign, depth_limit = 4, heuristic = heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
