@@ -155,14 +155,14 @@ class AlphaBetaPlayer(UtttPlayerTemplate):
         self.heuristicfcn = heuristic
 
     def make_move(self, state):
-        # if state.num_moves < 2:
-        #     legal_actions = game.actions(state)
-        #     # print("Legal Actions:",legal_actions)
-        #     move = choice(legal_actions)
-        #     if game.print_player_moves: print("Took Random Move: ", state.num_moves)
-        # else:
-        #     move = self.alpha_beta_search(state)
-        move = self.alpha_beta_search(state)
+        if state.num_moves < 2:
+            legal_actions = game.actions(state)
+            # print("Legal Actions:",legal_actions)
+            move = choice(legal_actions)
+            if game.print_player_moves: print("Took Random Move: ", state.num_moves)
+        else:
+            move = self.alpha_beta_search(state)
+        # move = self.alpha_beta_search(state)
         if game.print_player_moves: print(f"AlphaBeta Player made move: {move}")
         return move
 
