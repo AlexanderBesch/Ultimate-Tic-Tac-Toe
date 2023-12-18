@@ -248,9 +248,9 @@ def play_game(p1=None, p2=None, printouts=True):
 def main():
     # HEURISTIC OPTIONS
     # Name - Max_tested_working_depth - designer
-    # heu.homemade - Designed and made by Mohit/Alex
+    # heu.heuristic1 - Designed and made by Mohit/Alex
     # heu.pulkit_github - Designed and made by Pulkit (From uttt github python repo)
-    # heu.homemadeV2 - Designed and made by Mohit/Alex, gained inspiration from fulkit_github
+    # heu.heuristic2 - Designed and made by Mohit/Alex, gained inspiration from fulkit_github
 
     # PLAYER OPTIONS
     # Name - designer
@@ -266,7 +266,7 @@ def main():
     # IN THE PLAY_GAME() FUNCTION, THE BOOL VARIABLE 'PRINTOUTS' CAN BE MARKED TRUE OR FALSE
     # THIS CORRESPONDS TO WHETHER OR NOT EACH GAME WILL BE PRINTED AFTER EACH MOVE. ITS DEFAULT IS TRUE
     # NOTE: IN  PRINTING THE MASTER BOARD, THE SYMBOL 'T' CORRESPONDS TO A SUB-BOARD THAT ENDED IN A TIE
-    p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
+    p1 = players.AlphaBetaPlayer(O, 6, heu.heuristic2)
     p2 = players.RandomPlayer(X)
     play_game(p1, p2, printouts=True)
 
