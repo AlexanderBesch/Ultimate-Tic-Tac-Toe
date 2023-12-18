@@ -259,7 +259,7 @@ def main():
     # When calling AlphaBetaPlayer() or MinimaxPlayer(), only the player_symbol char needs to be passed
     # The depth limit and heuristic will be defaulted to 4 and players.heu.heuristic2 respectively
 
-    p1 = players.AlphaBetaPlayer(O, 6, players.heu.heuristic2)
+    p1 = players.AlphaBetaPlayer(O, depth_limit = 6, heuristic = players.heu.heuristic2)
     p2 = players.RandomPlayer(X)
     play_game(p1, p2, printouts=True)
 
