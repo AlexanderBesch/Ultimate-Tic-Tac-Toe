@@ -51,7 +51,6 @@ class UtttState:
         self.last_move = last_move
         self.master_board = build_master(self.board_array)  # Building the master board
         self.num_moves = num_moves
-        # self.heuristic = heuristic(self, currentplayer.sign)
 
     # String representation of the state
     def __repr__(self) -> str:
@@ -279,7 +278,6 @@ def main():
     # print("Running homemadeV2 vs PulkitGithub test")
     # score = search_test(p1, p2, iters, printouts=True)
     # print("Score: [random_wins, homemade_wins, ties", score)
-
 
 
 if __name__ == '__main__':
