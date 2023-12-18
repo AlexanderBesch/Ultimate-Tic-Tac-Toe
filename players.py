@@ -1,4 +1,3 @@
-### Implement the player Classes Here.
 # Import the other file funtions here, check this at end.
 import gameuttt as game
 from random import choice
