@@ -1,9 +1,6 @@
 # Importing libraries
-import copy
 from copy import deepcopy
 import players
-import time
-import threading
 
 # Defining Global Variables.
 EMPTY = '-'
@@ -61,13 +58,13 @@ class UtttState:
         # new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
         return new_string
 
-    # def print_subboard(self, num) -> str:
-    #     new_string = ""
-    #     sub_board = self.board_array[num]
-    #     for i in range(SIZEMINI):
-    #         items = " ".join(sub_board[i])
-    #         new_string += items + "\n"
-    #     print(new_string)
+    def print_subboard(self, num) -> str:
+        new_string = ""
+        sub_board = self.board_array[num]
+        for i in range(SIZEMINI):
+            items = " ".join(sub_board[i])
+            new_string += items + "\n"
+        print(new_string)
         
 class UtttGame:
     """A class to encapsulate the variable and methods for the Uttt game."""
