@@ -258,7 +258,7 @@ def main():
     # HumanPlayer and RandomPlyer take one positional argument i.e., player_symbol which is char (p1 : X, p2 : O).
     # AlphaBetaPlayer() and MinimaxPlayer() also take two named arguments i.e., depth_limit(defaults to 4) and heuristic(defauts to huiristic2).
 
-    p1 = players.AlphaBetaPlayer(X, depth_limit = 6, heuristic = players.heu.heuristic2)
+    p1 = players.AlphaBetaPlayer(X, depth_limit=6, heuristic=players.heu.heuristic2)
     p2 = players.HumanPlayer(O)
     play_game(p1, p2, printouts=True)
 
