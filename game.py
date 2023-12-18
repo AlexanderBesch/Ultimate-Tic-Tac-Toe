@@ -40,6 +40,41 @@ class RandomPlayer(OthelloPlayerTemplate):
         if print_player_moves: print(f"Random Player made move: {move}")
         return move
     
+class HumanPlayer(OthelloPlayerTemplate):
+    def __init__(self, mycolor):
+        self.color = mycolor
+
+    def get_color(self):
+        return self.color
+
+    def make_move(self, state):
+        curr_move = None
+        legals = actions(state)
+        while curr_move == None:
+            display(state)
+            if self.color == 1:
+                print("White ", end='')
+            else:
+                print("Black ", end='')
+            print(" to play.")
+            print("Legal moves are " + str(legals))
+            move = input("Enter your move as a r,c pair:")
+            if move == "":
+                return legals[0]
+
+            if move == SKIP and SKIP in legals:
+                return move
+
+            try:
+                movetup = int(move.split(',')[0]), int(move.split(',')[1])
+            except:
+                movetup = None
+            if movetup in legals:
+                curr_move = movetup
+            else:
+                print("That doesn't look like a legal action to me")
+        return curr_move
+
 class PlayerMohit(OthelloPlayerTemplate):
     """Random Player, chooses a action randomly from legal actions."""
     def __init__(self, mycolor):
@@ -93,41 +128,6 @@ class PlayerMohit(OthelloPlayerTemplate):
 
         return move
 
-class HumanPlayer(OthelloPlayerTemplate):
-    def __init__(self, mycolor):
-        self.color = mycolor
-
-    def get_color(self):
-        return self.color
-
-    def make_move(self, state):
-        curr_move = None
-        legals = actions(state)
-        while curr_move == None:
-            display(state)
-            if self.color == 1:
-                print("White ", end='')
-            else:
-                print("Black ", end='')
-            print(" to play.")
-            print("Legal moves are " + str(legals))
-            move = input("Enter your move as a r,c pair:")
-            if move == "":
-                return legals[0]
-
-            if move == SKIP and SKIP in legals:
-                return move
-
-            try:
-                movetup = int(move.split(',')[0]), int(move.split(',')[1])
-            except:
-                movetup = None
-            if movetup in legals:
-                curr_move = movetup
-            else:
-                print("That doesn't look like a legal action to me")
-        return curr_move
-
 class RandOthelloState:
     '''A class to represent an othello game state'''
 
@@ -158,7 +158,6 @@ class RandOthelloState:
             new_string += "-------------------------------------\n"
         return new_string
 
- 
 class MinimaxPlayer(OthelloPlayerTemplate):
     def __init__(self, mycolor, depth) -> None:
         self.color = mycolor
@@ -605,6 +604,6 @@ def main():
     print(new_board)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  
     main()
     
