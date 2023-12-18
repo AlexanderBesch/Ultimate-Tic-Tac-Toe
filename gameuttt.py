@@ -80,11 +80,6 @@ class UtttState:
         # new_string += "Current Player: " + str(self.current.get_sign()) + "    Heuristic: " + str(self.heuristic) + "\n"
         return new_string
 
-
-class UtttGame:
-    """A class to encapsulate the variable and methods for the Ultimate Tic-Tac-Toe game."""
-    pass  # Placeholder class with no attributes or methods
-
 def terminal_test(state):
     # INPUT: 3X3 GAME BOARD
     # OUTPUT: BOOLEAN IF GAME IS WON OR NOT, CHARACTER OF WINNING PLAYER
@@ -211,7 +206,6 @@ def play_game(p1=None, p2=None, printouts=True):
 
     s = UtttState(p1, p2)
     while True:
-    # for i in range(20):
         action = p1.make_move(s)
         if action not in actions(s):
             # print("Illegal move made by X")
@@ -239,10 +233,6 @@ def play_game(p1=None, p2=None, printouts=True):
             print("Player " + winner + " wins!")
             if not printouts: print(s)
             return winner
-    # print('Debug here.')
-    # # print(s)
-    # p1.heuristic(s)
-
 
 
 def main():
@@ -266,10 +256,9 @@ def main():
     # IN THE PLAY_GAME() FUNCTION, THE BOOL VARIABLE 'PRINTOUTS' CAN BE MARKED TRUE OR FALSE
     # THIS CORRESPONDS TO WHETHER OR NOT EACH GAME WILL BE PRINTED AFTER EACH MOVE. ITS DEFAULT IS TRUE
     # NOTE: IN  PRINTING THE MASTER BOARD, THE SYMBOL 'T' CORRESPONDS TO A SUB-BOARD THAT ENDED IN A TIE
-    p1 = players.AlphaBetaPlayer(O, 6, heu.heuristic2)
-    p2 = players.RandomPlayer(X)
+    p1 = players.AlphaBetaPlayer(O, 3, heu.heuristic2)
+    p2 = players.HumanPlayer(X)
     play_game(p1, p2, printouts=True)
-
 
 
     # CODE USED IN THE FINAL TESTING OF THE ALGORITHMS AND HEURISTICS

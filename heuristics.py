@@ -151,6 +151,7 @@ def pulkit_github(player, state):
 
     return score
 
+
 def heuristic2(player, state):
     """Returns the heuristic value of the given state using an extended version of the homemade scoring method.
     This is the evaluation function for the state."""
