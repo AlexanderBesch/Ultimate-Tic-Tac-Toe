@@ -1,4 +1,3 @@
-### Implement the player Classes Here.
 # Import the other file funtions here, check this at end.
 import gameuttt as game
 from random import choice
@@ -86,7 +85,7 @@ class HumanPlayer(UtttPlayerTemplate):
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit, heuristic):
+    def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
         self.heuristicfcn = heuristic
@@ -149,7 +148,7 @@ class MinimaxPlayer(UtttPlayerTemplate):
 
 
 class AlphaBetaPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit, heuristic):
+    def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
         self.heuristicfcn = heuristic
@@ -162,6 +161,7 @@ class AlphaBetaPlayer(UtttPlayerTemplate):
             if game.print_player_moves: print("Took Random Move: ", state.num_moves)
         else:
             move = self.alpha_beta_search(state)
+        # move = self.alpha_beta_search(state)
         if game.print_player_moves: print(f"AlphaBeta Player made move: {move}")
         return move
 

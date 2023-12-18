@@ -1,8 +1,15 @@
+# READ ME
+# REFER TO MAIN FUNCTION TO RUN THE CODE
+# FURTHER INSTUCTIONS WILL BE PROVIDED IN MAIN
+# THERE ARE 3 TOTAL FILES: GAMEUTTT.PY, PLAYERS.PY, AND HEURISTICS.PY
+# TO RUN THE PROGRAM, RUN GAMEUTTT.PY
+
+
 # Importing libraries
 import copy
 from copy import deepcopy
 import time
-import heuristics as heu  # Importing a module named 'heuristics' as 'heu'
+# import heuristics as heu  # Importing a module named 'heuristics' as 'heu'
 
 # Defining Global Variables.
 EMPTY = '-'  # Symbol representing an empty cell on the game board
@@ -240,31 +247,48 @@ def play_game(p1=None, p2=None, printouts=True):
 def main():
     # HEURISTIC OPTIONS
     # Name - Max_tested_working_depth - designer
-    # heu.homemade - Designed and made by Mohit/Alex
-    # heu.pulkit_github - Designed and made by Pulkit (From uttt github python repo)
-    # heu.homemadeV2 - Designed and made by Mohit/Alex, gained inspiration from fulkit_github
+    # players.heu.heuristic1 - Designed and made by Mohit/Alex
+    # players.heu.pulkit_github - Designed and made by Pulkit (From uttt github python repo)
+    # players.heu.heuristic2 - Designed and made by Mohit/Alex, gained inspiration from fulkit_github
 
     # PLAYER OPTIONS
     # Name - designer
     # players.HumanPlayer - Designed and made by Mohit/Alex
-    # players.AlphaBetaPlayer - Designed and made by Mohit/Alex
+    # players.AlphaBetaPlayer(PlayerSymbol (char), depth_limit (int), heuristic) - Designed and made by Mohit/Alex
+    # players.MinimaxPlayer(PlayerSymbol (char), depth_limit (int), heuristic) - Designed and made by Mohit/Alex
     # players.RandomPlayer - Designed and made by Mohit/Alex
 
-    p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
-    p2 = players.HumanPlayer(X)
-    play_game(p1, p2)
+    # RUNNING THE PROGRAM :
+    # TO RUN THE PROGRAM, 2 PLAYERS NEED TO BE DEFINED. AN EXAMPLE IS SHOWN BELOW
+    # BOTH PLAYERS NEED TO BE PASSED TO THE PLAY_GAME FUNCTION. THE PLAY_GAME FUNCTION WILL HANDLE
+    # ALL GAMEPLAY UNTIL THE GAME IS TERMINATED IN WIN, LOSS OR TIE.
+    # IN THE PLAY_GAME() FUNCTION, THE BOOL VARIABLE 'PRINTOUTS' CAN BE MARKED TRUE OR FALSE
+    # THIS CORRESPONDS TO WHETHER OR NOT EACH GAME WILL BE PRINTED AFTER EACH MOVE. ITS DEFAULT IS TRUE
+    # NOTE: IN  PRINTING THE MASTER BOARD, THE SYMBOL 'T' CORRESPONDS TO A SUB-BOARD THAT ENDED IN A TIE
+    # When calling AlphaBetaPlayer() or MinimaxPlayer(), only the player_symbol char needs to be passed
+    # The depth limit and heuristic will be defaulted to 4 and players.heu.heuristic2 respectively
+
+    p1 = players.AlphaBetaPlayer(O, 6, players.heu.heuristic2)
+    p2 = players.RandomPlayer(X)
+    play_game(p1, p2, printouts=True)
+
 
 
     # CODE USED IN THE FINAL TESTING OF THE ALGORITHMS AND HEURISTICS
+    # THE FOLLOWING IS A FUNCTION THAT ALLOWS THE USER TO RUN MULTIPLE AGENT MATCHUPS.
+    # 2 PLAYERS NEED TO BE DEFINED. GENERALLY THE HUMAN AGENT IS NOT GOOD FOR THIS MODE
+    # THE NUMBER OF GAMES TO BE PLAYED IS DEFINED AS THE 'ITERS' VARIABLE
+    # THE PROGRAM WILL THEN KEEP TRACK OF TIME STATS AND SCORE STATS
+    # TO FIND THE SCORE RESULTS, RUN THE FUNCTION SEARCH_TEST(), WITH THE ARGUMENTS: PLAYER1, PLAYER2, PRINTOUTS(BOOL)
+    # SETTING PRINOUTS TO TRUE WILL PRINT OUT THE GAMEPLAY AS THE GAMES ARE RUN
+    # TIME WILL BE TALLIED AND PRINTED FROM WITHIN THE SEARCH_TEST() FUCNTION
+
     # p1 = players.AlphaBetaPlayer(O, 6, heu.homemadeV2)
     # p2 = players.AlphaBetaPlayer(X, 6, heu.pulkit_github)
     # iters = 1
     # print("Running homemadeV2 vs PulkitGithub test")
-    # ts = time.time()
-    # score = search_test(p1, p2, iters, printouts=False)
-    # t_stop = time.time()
+    # score = search_test(p1, p2, iters, printouts=True)
     # print("Score: [random_wins, homemade_wins, ties", score)
-    # print("Total time: ", t_stop - ts, "s")
 
 
 if __name__ == '__main__':
