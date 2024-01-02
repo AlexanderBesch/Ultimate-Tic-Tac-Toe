@@ -38,7 +38,7 @@ class UtttPlayerTemplate:
 
 
 class MinimaxPlayer(UtttPlayerTemplate):
-    def __init__(self, mysign, depth_limit=4, heuristic=heu.heuristic2):
+    def __init__(self, mysign, depth_limit = 4, heuristic = heu.heuristic2):
         self.depth_limit = depth_limit
         self.sign = mysign
         self.heuristicfcn = heuristic
