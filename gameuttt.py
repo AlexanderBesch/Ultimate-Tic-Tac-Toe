@@ -196,6 +196,8 @@ def search_test(player1, player2, num_iterations=1, printouts=True):
     return score
 
 
+
+
 def play_game(p1=None, p2=None, printouts=True):
     """Play the game with two players. Default use two humans."""
     # Function to simulate a game between two players
@@ -217,6 +219,8 @@ def play_game(p1=None, p2=None, printouts=True):
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
+            # if printouts: print(s)
+            # REMOVE THE COMMENT BELOW AND COMMENT THE LINE ABOVE
             if not printouts: print(s)
             return winner
         action = p2.make_move(s)
@@ -231,7 +235,53 @@ def play_game(p1=None, p2=None, printouts=True):
         if game_over:
             print("Game Over")
             print("Player " + winner + " wins!")
+            # if printouts: print(s)
+            # REMOVE THE COMMENT BELOW AND COMMENT THE LINE ABOVE
             if not printouts: print(s)
+            return winner
+
+
+
+def monte_carlo(p1=None, p2=None, printouts=True):
+    """Play the game with two players. Default use two humans."""
+    # Function to simulate a game between two players
+    if p1 == None:
+        p1 = players.HumanPlayer(X)
+    if p2 == None:
+        p2 = players.HumanPlayer(O)
+
+    s = UtttState(p1, p2)
+    while True:
+        action = p1.make_move(s)
+        if action not in actions(s):
+            # print("Illegal move made by X")
+            # print("O wins!")
+            return None
+        s = result(s, action)
+        if printouts: print(s)
+        game_over, winner = terminal_test(s)
+        if game_over:
+            # print("Game Over")
+            # print("Player " + winner + " wins!")
+            if printouts: print(s)
+            # REMOVE THE COMMENT BELOW AND COMMENT THE LINE ABOVE
+            # if not printouts: print(s)
+            return winner
+        action = p2.make_move(s)
+        if action not in actions(s):
+            # print("Illegal move made by O")
+            # print("O wins!")
+            return None
+        # print(s)
+        s = result(s, action)
+        if printouts: print(s)
+        game_over, winner = terminal_test(s)
+        if game_over:
+            # print("Game Over")
+            # print("Player " + winner + " wins!")
+            if printouts: print(s)
+            # REMOVE THE COMMENT BELOW AND COMMENT THE LINE ABOVE
+            # if not printouts: print(s)
             return winner
 
 
@@ -259,9 +309,12 @@ def main():
     # When calling AlphaBetaPlayer() or MinimaxPlayer(), only the player_symbol char needs to be passed
     # The depth limit and heuristic will be defaulted to 4 and players.heu.heuristic2 respectively
 
-    p1 = players.AlphaBetaPlayer(O, depth_limit = 6, heuristic = players.heu.heuristic2)
-    p2 = players.RandomPlayer(X)
-    play_game(p1, p2, printouts=True)
+    # p1 = players.AlphaBetaPlayer(O, depth_limit = 6, heuristic = players.heu.heuristic2)
+    p1 = players.RandomPlayer(O)
+    # p2 = players.RandomPlayer(X)
+    p2 = players.MonteCarlo(X, 1000)
+    winner = play_game(p1, p2, printouts=False)
+    print(winner)
 
 
     # CODE USED IN THE FINAL TESTING OF THE ALGORITHMS AND HEURISTICS
